@@ -68,7 +68,7 @@ export default {
         },
         {
           name: 'Forms',
-          url: '/base/forms',
+          url: '/cms/base/forms',
           icon: 'icon-puzzle',
         },
         {

@@ -33,6 +33,8 @@ class DefaultLayout extends Component {
   }
 
   render() {
+    let navigation = this.props.navigation1;
+    let routes = this.props.routes1;
     return (
       <div className="app">
         <AppHeader fixed>
@@ -67,7 +69,7 @@ class DefaultLayout extends Component {
                         )} />
                     ) : (null);
                   })}
-                  <Redirect from="/" to="/dashboard" />
+                  {/* <Redirect exact from="/cms" to="/cms/dashboard" /> */}
                 </Switch>
               </Suspense>
             </Container>

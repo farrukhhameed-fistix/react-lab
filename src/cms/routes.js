@@ -1,12 +1,12 @@
 import React from 'react';
-import DefaultLayout from './containers/DefaultLayout';
-
+//import DefaultLayout from '../containers/DefaultLayout';
+import CmsLayout from './CmsLayout';
 // const Breadcrumbs = React.lazy(() => import('./views/Base/Breadcrumbs'));
 // const Cards = React.lazy(() => import('./views/Base/Cards'));
 // const Carousels = React.lazy(() => import('./views/Base/Carousels'));
 // const Collapses = React.lazy(() => import('./views/Base/Collapses'));
 // const Dropdowns = React.lazy(() => import('./views/Base/Dropdowns'));
-const Forms = React.lazy(() => import('./views/Base/Forms'));
+const Forms = React.lazy(() => import('../views/Base/Forms'));
 // const Jumbotrons = React.lazy(() => import('./views/Base/Jumbotrons'));
 // const ListGroups = React.lazy(() => import('./views/Base/ListGroups'));
 // const Navbars = React.lazy(() => import('./views/Base/Navbars'));
@@ -23,7 +23,7 @@ const Forms = React.lazy(() => import('./views/Base/Forms'));
 // const ButtonGroups = React.lazy(() => import('./views/Buttons/ButtonGroups'));
 // const Buttons = React.lazy(() => import('./views/Buttons/Buttons'));
 // const Charts = React.lazy(() => import('./views/Charts'));
-const Dashboard = React.lazy(() => import('./views/Dashboard'));
+const Dashboard = React.lazy(() => import('../views/Dashboard'));
 // const CoreUIIcons = React.lazy(() => import('./views/Icons/CoreUIIcons'));
 // const Flags = React.lazy(() => import('./views/Icons/Flags'));
 // const FontAwesome = React.lazy(() => import('./views/Icons/FontAwesome'));
@@ -34,19 +34,19 @@ const Dashboard = React.lazy(() => import('./views/Dashboard'));
 // const Colors = React.lazy(() => import('./views/Theme/Colors'));
 // const Typography = React.lazy(() => import('./views/Theme/Typography'));
 // const Widgets = React.lazy(() => import('./views/Widgets/Widgets'));
-const Users = React.lazy(() => import('./views/Users/Users'));
-const User = React.lazy(() => import('./views/Users/User'));
+// const Users = React.lazy(() => import('../views/Users/Users'));
+// const User = React.lazy(() => import('../views/Users/User'));
 
 // https://github.com/ReactTraining/react-router/tree/master/packages/react-router-config
 const routes = [
-  { path: '/', exact: true, name: 'Home', component: DefaultLayout },
-  { path: '/dashboard', name: 'Dashboard', component: Dashboard },
+  { path: '/cms', exact: true, name: 'Home', component: CmsLayout },
+  { path: '/cms/dashboard', name: 'Dashboard', component: Dashboard },
   // { path: '/theme', exact: true, name: 'Theme', component: Colors },
   // { path: '/theme/colors', name: 'Colors', component: Colors },
   // { path: '/theme/typography', name: 'Typography', component: Typography },
   // { path: '/base', exact: true, name: 'Base', component: Cards },
   // { path: '/base/cards', name: 'Cards', component: Cards },
-  { path: '/base/forms', name: 'Forms', component: Forms },
+  { path: '/cms/base/forms', name: 'Forms', component: Forms },
   // { path: '/base/switches', name: 'Switches', component: Switches },
   // { path: '/base/tables', name: 'Tables', component: Tables },
   // { path: '/base/tabs', name: 'Tabs', component: Tabs },
@@ -78,8 +78,8 @@ const routes = [
   // { path: '/notifications/modals', name: 'Modals', component: Modals },
   // { path: '/widgets', name: 'Widgets', component: Widgets },
   // { path: '/charts', name: 'Charts', component: Charts },
-  { path: '/users', exact: true,  name: 'Users', component: Users },
-  { path: '/users/:id', exact: true, name: 'User Details', component: User },
+  // { path: '/users', exact: true,  name: 'Users', component: Users },
+  // { path: '/users/:id', exact: true, name: 'User Details', component: User },
 ];
 
 export default routes;

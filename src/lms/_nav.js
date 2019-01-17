@@ -2,7 +2,7 @@ export default {
   items: [
     {
       name: 'Dashboard',
-      url: '/dashboard',
+      url: '/lms/dashboard',
       icon: 'icon-speedometer',
       badge: {
         variant: 'info',
@@ -19,8 +19,8 @@ export default {
       class: ''             // optional class names space delimited list for title item ex: "text-center"
     },
     {
-      name: 'Colors',
-      url: '/theme/colors',
+      name: 'Users',
+      url: '/lms/users',
       icon: 'icon-drop',
     },
     {
@@ -68,7 +68,7 @@ export default {
         },
         {
           name: 'Forms',
-          url: '/base/forms',
+          url: '/lms/base/forms',
           icon: 'icon-puzzle',
         },
         {
