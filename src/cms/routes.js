@@ -1,7 +1,7 @@
 import React from 'react';
 //import DefaultLayout from '../containers/DefaultLayout';
 import CmsLayout from './CmsLayout';
-const InquiryStatusListView  = React.lazy(() => import('./CustomInquiryStatus/StatusList/InquiryStatusListView'));
+const InquiryStatusListPage  = React.lazy(() => import('./CustomInquiryStatus/StatusList/InquiryStatusListPage'));
 // const Breadcrumbs = React.lazy(() => import('./views/Base/Breadcrumbs'));
 // const Cards = React.lazy(() => import('./views/Base/Cards'));
 // const Carousels = React.lazy(() => import('./views/Base/Carousels'));
@@ -42,8 +42,8 @@ const Dashboard = React.lazy(() => import('../views/Dashboard'));
 const routes = [
   { path: '/cms', exact: true, name: 'Home', component: CmsLayout },
   { path: '/cms/dashboard', name: 'Dashboard', component: Dashboard },
-  { path: '/cms/settings', exact: true, name: 'Setting', component: InquiryStatusListView },
-  { path: '/cms/settings/inquiry-status', name: 'Inquiry Status', component: InquiryStatusListView },
+  { path: '/cms/settings', exact: true, name: 'Setting', component: InquiryStatusListPage },
+  { path: '/cms/settings/inquiry-status', name: 'Inquiry Status', component: InquiryStatusListPage },
   // { path: '/theme/typography', name: 'Typography', component: Typography },
   // { path: '/base', exact: true, name: 'Base', component: Cards },
   // { path: '/base/cards', name: 'Cards', component: Cards },

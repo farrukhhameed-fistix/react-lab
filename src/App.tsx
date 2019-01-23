@@ -58,6 +58,9 @@ const Page500 = Loadable({
   loading
 });
 
+interface IAppProp{
+  Store: any
+}
 class App extends Component {
 
   render() {
