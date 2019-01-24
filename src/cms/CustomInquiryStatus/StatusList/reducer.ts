@@ -3,7 +3,6 @@ import { StatusListState, inItStatusListState } from "./StatusListState";
 import * as actionTypes from "./actions";
 
 
-
 const reducer: Reducer<StatusListState> = (state = inItStatusListState, action: actionTypes.StatusListActionCreatorTypes) => {
   switch (action.type) {
     case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST: {

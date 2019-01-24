@@ -1,6 +1,7 @@
 import { action } from "typesafe-actions";
 import { InquiryStatusModel } from "./InquiryStatusModel";
 
+
 export enum StatusListActionTypes {
   FETCH_INQUIRY_STATUS_LIST_REQUEST = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST",
   FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED",
@@ -8,32 +9,34 @@ export enum StatusListActionTypes {
 }
 
 interface FetchListRequestAction {
-  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST  
+  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST;
 }
 
 interface FetchListRequestSucceed {
-  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED
-  payload: InquiryStatusModel[]
+  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED;
+  payload: InquiryStatusModel[];
 }
 
 interface FetchListRequestFailed {
-  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED
-  payload: string
+  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED;
+  payload: string;
 }
 
-export type StatusListActionCreatorTypes = FetchListRequestAction | FetchListRequestSucceed | FetchListRequestFailed
+export type StatusListActionCreatorTypes =
+  | FetchListRequestAction
+  | FetchListRequestSucceed 
+  | FetchListRequestFailed;
 
-export const FetchListRequest = () => ({
+export const FetchListRequest = () : FetchListRequestAction => ({
   type: StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST
 });
 
-export const FetchListRequestSucceed = (data: Array<InquiryStatusModel>) =>
+
+export const FetchListRequestSucceed = (data: Array<InquiryStatusModel>): FetchListRequestSucceed =>
   action(StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED, data);
 
-export const FetchListRequestFailed = (message: string) =>
+export const FetchListRequestFailed = (message: string): FetchListRequestFailed =>
   action(
     StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED,
     message
   );
-
-

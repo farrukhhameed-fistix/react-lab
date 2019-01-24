@@ -1,57 +1,51 @@
 import React, { Component } from "react";
-import {connect} from 'react-redux'
+import { connect } from "react-redux";
 
 import { Badge, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
 
-import { FetchListRequest, FetchListRequestSucceed } from "./actions";
+import { FetchListRequestSucceed } from "./actions";
 import { InquiryStatusModel } from "./InquiryStatusModel";
 import StatusListItem from "./statusListItem";
 import { ApplicationState } from "../../../store";
+import { ThunkDispatch } from "redux-thunk";
+import { FetchListRequestThunk } from "./asyncActions";
 
-interface IState {
-   readonly Statuses: Array<InquiryStatusModel>;
-}
+interface IState {}
 
-interface IProp {
+interface IOwnProps {
   message: string;
-  Statuses: InquiryStatusModel[]
-  FetchListRequestSucceed: (payload:InquiryStatusModel[])=>{};
 }
-class StatusListComponent extends Component<IProp, IState> {
-  constructor(props: IProp) {
+
+interface IDispatchProps {
+  FetchListRequestSucceed: (payload: InquiryStatusModel[]) => void;
+  FetchListRequest: () => void;
+}
+
+interface IStateProps {
+  Statuses: Array<InquiryStatusModel>;
+}
+
+type Props = IStateProps & IOwnProps & IDispatchProps;
+class StatusListComponent extends Component<Props, IState> {
+  constructor(props: Props) {
     super(props);
     this.state = this.getInItState(props);
   }
 
-  private unSubscribeStoreListener!: () => {};
-
-  getInItState(props: IProp): IState {
-    let statuses = new Array<InquiryStatusModel>();
-
-    // statuses.push(new InquiryStatusModel(1, "stats 1", "#123456"));
-
-    // statuses.push(new InquiryStatusModel(2, "stats 2", "#123456"));
-    // statuses.push(new InquiryStatusModel(3, "stats 3", "#123456"));
+  getInItState(props: Props): IState {
     return {
-      Statuses: statuses
+      Statuses: []
     };
   }
 
-
-
-  componentDidMount=()=>{
-
-    // this.unSubscribeStoreListener = window.store.subscribe(()=> this.setState({Statuses: window.store.getState().inquiryStatusList.statuses}));
-    
-    let statuses = new Array<InquiryStatusModel>();
-    statuses.push(new InquiryStatusModel(1, "stats 1", "#123456"));
-    statuses.push(new InquiryStatusModel(2, "stats 2", "#123456"));
-    statuses.push(new InquiryStatusModel(3, "stats 3", "#123456"));
-    
-    // window.store.dispatch(FetchListRequest());
-    // window.store.dispatch(FetchListRequestSucceed(statuses));
-    this.props.FetchListRequestSucceed(statuses);
-  }
+  componentDidMount = () => {    
+     this.props.FetchListRequest();
+    // let statuses = new Array<InquiryStatusModel>();
+    //     statuses.push(new InquiryStatusModel(1, "stats 1", "#123456"));
+    //     statuses.push(new InquiryStatusModel(2, "stats 2", "#123456"));
+    //     statuses.push(new InquiryStatusModel(3, "stats 3", "#123456"));
+    //     this.props.FetchListRequestSucceed(statuses);
+  };
 
   render() {
     return (
@@ -87,22 +81,49 @@ class StatusListComponent extends Component<IProp, IState> {
         </div>
       </React.Fragment>
     );
-  }
-
-  componentWillUnmount= () =>{
-    // this.unSubscribeStoreListener();
-  }
+  } 
 }
 
-const mapStateToProps = (state: ApplicationState) => {
-  return{
+const mapStateToProps = (state: ApplicationState, ownProps: IOwnProps): IStateProps => {
+  return {
     Statuses: state.InquiryStatus.inquiryStatusList.statuses
+  };
+};
+
+const mapDispatchToProps3 = {
+
+  FetchListRequest: () => {
+
+  },
+  FetchListRequestSucceed: (data:any) => {
+    return FetchListRequestSucceed(data)
   }
 }
 
-const mapDispatchToProps = {
-  FetchListRequest, 
-  FetchListRequestSucceed
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(StatusListComponent)
+const mapDispatchToProps1 = (dispatch:any) => ({
+  
+    FetchListRequest: () => {
+
+    },
+    FetchListRequestSucceed :(data: any) =>{
+      dispatch(FetchListRequestSucceed(data))
+    }
+  
+})
+const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>,ownProps: IOwnProps): IDispatchProps => {
+  return {
+    FetchListRequest: async () => {
+      await dispatch(FetchListRequestThunk())      
+      console.log('thunk call completed?')
+    },
+    FetchListRequestSucceed : (data)=>{
+      dispatch(FetchListRequestSucceed(data))
+    } 
+  };
+};
+
+export default connect<IStateProps, IDispatchProps, IOwnProps, ApplicationState>(
+  mapStateToProps,
+  mapDispatchToProps
+)(StatusListComponent);

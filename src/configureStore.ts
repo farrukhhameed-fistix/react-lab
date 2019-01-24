@@ -1,5 +1,7 @@
-import { Store, createStore, applyMiddleware } from 'redux'
-import { ApplicationState, rootReducer } from './store';
+import { Store, createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import { composeWithDevTools } from "redux-devtools-extension";
+import { ApplicationState, rootReducer } from "./store";
 
 //import { connectRouter, routerMiddleware } from 'connected-react-router'
 //import { composeWithDevTools } from 'redux-devtools-extension'
@@ -7,11 +9,12 @@ import { ApplicationState, rootReducer } from './store';
 //import {ApplicationState} from './store/ApplicationState'
 //import { rootReducer } from './store/RootReducer';
 
-export default function configureStore(  
+export default function configureStore(
   initialState: ApplicationState
 ): Store<ApplicationState> {
+  
   // create the composing function for our middlewares
-  // const composeEnhancers = composeWithDevTools({})
+  const composeEnhancers = composeWithDevTools({});
   // create the redux-saga middleware
   //const sagaMiddleware = createSagaMiddleware()
 
@@ -20,7 +23,8 @@ export default function configureStore(
   const store = createStore(
     rootReducer,
     initialState,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-  )
-  return store
+    // composeEnhancers()
+    composeEnhancers(applyMiddleware(thunk))
+  );
+  return store;
 }
