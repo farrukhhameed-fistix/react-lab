@@ -2,11 +2,13 @@ import { InquiryStatusModel } from "./InquiryStatusModel";
 
 import { ThunkDispatch, ThunkAction } from "redux-thunk";
 import { AnyAction } from "redux";
-import { FetchListRequestSucceed } from "./actions";
+import { FetchListRequestSucceed, FetchListRequestStarted, FetchListRequestFailed } from "./actions";
 
 export const FetchListRequestThunk = (): ThunkAction<Promise<void>, {}, {}, AnyAction> => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>): Promise<void> => {
 
+    dispatch(FetchListRequestStarted())
+    
     var promise = new Promise<void>((resolve, reject) => {
       setTimeout(() => {
         let statuses = new Array<InquiryStatusModel>();
@@ -15,8 +17,9 @@ export const FetchListRequestThunk = (): ThunkAction<Promise<void>, {}, {}, AnyA
         statuses.push(new InquiryStatusModel(3, "stats 3", "#123456"));
 
         dispatch(FetchListRequestSucceed(statuses))
+        // dispatch(FetchListRequestFailed("There is some error occured"));
         return resolve();
-      }, 5000);
+      }, 2000);
     });
 
     return promise;   

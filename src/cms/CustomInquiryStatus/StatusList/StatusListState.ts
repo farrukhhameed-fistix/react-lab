@@ -3,11 +3,11 @@ import { InquiryStatusModel } from "./InquiryStatusModel";
 export interface StatusListState{
     readonly statuses: InquiryStatusModel[]
     readonly loading: boolean
-    readonly error?: string
+    readonly errors: string[]
 }
 
 export const inItStatusListState: StatusListState = {
     statuses: [],
-    error: undefined,
+    errors: [],
     loading: false
   };

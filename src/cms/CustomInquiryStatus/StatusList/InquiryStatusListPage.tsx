@@ -10,7 +10,7 @@ export default class InquiryStatusListPage extends Component<any,any>{
     render(){
         return(
             <React.Fragment>
-                <StatusListComponent message="Hello World"/>
+                <StatusListComponent />
             </React.Fragment>
         );
     }

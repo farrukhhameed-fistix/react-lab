@@ -5,14 +5,14 @@ import * as actionTypes from "./actions";
 
 const reducer: Reducer<StatusListState> = (state = inItStatusListState, action: actionTypes.StatusListActionCreatorTypes) => {
   switch (action.type) {
-    case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST: {
-       return { ...state, loading: true };      
+    case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_STARTED: {
+       return { ...state, loading: true, errors:[] };      
     }
     case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED: {
-       return { ...state, loading: false, statuses: action.payload };
+       return { ...state, loading: false, statuses: action.payload, errors:[] };
     }
     case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED: {
-      return { ...state, loading: false, error: action.payload };
+      return { ...state, loading: false, errors: [action.payload] };
     }
     default: {
       return state;

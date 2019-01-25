@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
-import { Badge, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
+import { Alert, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
+import Loader from 'react-loader'
 
 import { FetchListRequestSucceed } from "./actions";
 import { InquiryStatusModel } from "./InquiryStatusModel";
@@ -9,20 +9,21 @@ import StatusListItem from "./statusListItem";
 import { ApplicationState } from "../../../store";
 import { ThunkDispatch } from "redux-thunk";
 import { FetchListRequestThunk } from "./asyncActions";
+import { Message, IMessage, MessageType } from "../../../shared/components/Message";
 
 interface IState {}
 
-interface IOwnProps {
-  message: string;
+interface IOwnProps {  
 }
 
-interface IDispatchProps {
-  FetchListRequestSucceed: (payload: InquiryStatusModel[]) => void;
-  FetchListRequest: () => void;
+interface IDispatchProps {  
+  getAllStatuses: () => void;
 }
 
 interface IStateProps {
-  Statuses: Array<InquiryStatusModel>;
+  statuses: Array<InquiryStatusModel>;
+  showLoader: boolean;
+  errors: string[]
 }
 
 type Props = IStateProps & IOwnProps & IDispatchProps;
@@ -39,17 +40,17 @@ class StatusListComponent extends Component<Props, IState> {
   }
 
   componentDidMount = () => {    
-     this.props.FetchListRequest();
-    // let statuses = new Array<InquiryStatusModel>();
-    //     statuses.push(new InquiryStatusModel(1, "stats 1", "#123456"));
-    //     statuses.push(new InquiryStatusModel(2, "stats 2", "#123456"));
-    //     statuses.push(new InquiryStatusModel(3, "stats 3", "#123456"));
-    //     this.props.FetchListRequestSucceed(statuses);
+     this.props.getAllStatuses();    
   };
 
   render() {
+    let { errors } = this.props;
+    let messages: IMessage[] = errors.map(error => { return { type: MessageType.error, message: error } });
+    
     return (
       <React.Fragment>
+        <Loader loaded={this.props.showLoader} />
+        <Message messages = {messages}></Message>
         <div className="animated fadeIn">
           <Row>
             <Col xl={6}>
@@ -69,7 +70,7 @@ class StatusListComponent extends Component<Props, IState> {
                       </tr>
                     </thead>
                     <tbody>
-                      {this.props.Statuses.map((status, index) => (
+                      {this.props.statuses.map((status, index) => (
                         <StatusListItem key={index} {...status} />
                       ))}
                     </tbody>
@@ -86,39 +87,16 @@ class StatusListComponent extends Component<Props, IState> {
 
 const mapStateToProps = (state: ApplicationState, ownProps: IOwnProps): IStateProps => {
   return {
-    Statuses: state.InquiryStatus.inquiryStatusList.statuses
+    statuses: state.InquiryStatus.inquiryStatusList.statuses,
+    showLoader: !state.InquiryStatus.inquiryStatusList.loading,
+    errors: state.InquiryStatus.inquiryStatusList.errors
   };
 };
 
-const mapDispatchToProps3 = {
-
-  FetchListRequest: () => {
-
-  },
-  FetchListRequestSucceed: (data:any) => {
-    return FetchListRequestSucceed(data)
-  }
-}
-
-
-const mapDispatchToProps1 = (dispatch:any) => ({
-  
-    FetchListRequest: () => {
-
-    },
-    FetchListRequestSucceed :(data: any) =>{
-      dispatch(FetchListRequestSucceed(data))
-    }
-  
-})
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>,ownProps: IOwnProps): IDispatchProps => {
   return {
-    FetchListRequest: async () => {
-      await dispatch(FetchListRequestThunk())      
-      console.log('thunk call completed?')
-    },
-    FetchListRequestSucceed : (data)=>{
-      dispatch(FetchListRequestSucceed(data))
+    getAllStatuses: async () => {
+      dispatch(FetchListRequestThunk())      
     } 
   };
 };

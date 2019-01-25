@@ -3,13 +3,13 @@ import { InquiryStatusModel } from "./InquiryStatusModel";
 
 
 export enum StatusListActionTypes {
-  FETCH_INQUIRY_STATUS_LIST_REQUEST = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST",
+  FETCH_INQUIRY_STATUS_LIST_REQUEST_STARTED = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST_STARTED",
   FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED",
   FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED = "@@CustomInquiryStatus/FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED"
 }
 
-interface FetchListRequestAction {
-  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST;
+interface FetchListRequestStarted {
+  type: typeof StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_STARTED;
 }
 
 interface FetchListRequestSucceed {
@@ -23,14 +23,13 @@ interface FetchListRequestFailed {
 }
 
 export type StatusListActionCreatorTypes =
-  | FetchListRequestAction
+  | FetchListRequestStarted
   | FetchListRequestSucceed 
   | FetchListRequestFailed;
 
-export const FetchListRequest = () : FetchListRequestAction => ({
-  type: StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST
+export const FetchListRequestStarted = () : FetchListRequestStarted => ({
+  type: StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_STARTED
 });
-
 
 export const FetchListRequestSucceed = (data: Array<InquiryStatusModel>): FetchListRequestSucceed =>
   action(StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_SUCCEED, data);
