@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Alert, Card, CardBody, CardHeader, Col, Row, Table } from "reactstrap";
+import { Alert, Card, CardBody, CardHeader, Col, Row, Table, Button } from "reactstrap";
 import Loader from 'react-loader'
 
 import { FetchListRequestSucceed } from "./actions";
@@ -10,11 +10,12 @@ import { ApplicationState } from "../../../store";
 import { ThunkDispatch } from "redux-thunk";
 import { FetchListRequestThunk } from "./asyncActions";
 import { Message, IMessage, MessageType } from "../../../shared/components/Message";
+import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 interface IState {}
 
-interface IOwnProps {  
-}
+interface IOwnProps {}
 
 interface IDispatchProps {  
   getAllStatuses: () => void;
@@ -25,6 +26,9 @@ interface IStateProps {
   showLoader: boolean;
   errors: string[]
 }
+
+const Div = styled("div")`
+`;
 
 type Props = IStateProps & IOwnProps & IDispatchProps;
 class StatusListComponent extends Component<Props, IState> {
@@ -51,12 +55,17 @@ class StatusListComponent extends Component<Props, IState> {
       <React.Fragment>
         <Loader loaded={this.props.showLoader} />
         <Message messages = {messages}></Message>
-        <div className="animated fadeIn">
+        <Div className="animated fadeIn">
           <Row>
-            <Col xl={6}>
+            <Col xl={12}>
               <Card>
                 <CardHeader>
                   <i className="fa fa-align-justify" /> Inquiry Statuses
+                  <div className="card-header-actions">
+                    <Link to="/cms/settings/inquiry-status/create">
+                      <Button color="primary" className="px-4">Create</Button>
+                    </Link>
+                  </div>
                 </CardHeader>
                 <CardBody>
                   <Table responsive hover>
@@ -79,7 +88,7 @@ class StatusListComponent extends Component<Props, IState> {
               </Card>
             </Col>
           </Row>
-        </div>
+        </Div>
       </React.Fragment>
     );
   } 

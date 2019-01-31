@@ -1,4 +1,4 @@
-import { InquiryStatusState, inItInquiryStatusState } from "../cms/CustomInquiryStatus";
+import { InquiryStatusState, inItInquiryStatusState } from "../cms/InquiryStatus";
 import { HeroesState, inItHeroesState } from "../cms/heroes";
 
 

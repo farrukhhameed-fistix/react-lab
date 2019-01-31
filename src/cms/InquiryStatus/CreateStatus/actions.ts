@@ -1,5 +1,5 @@
 import { action } from "typesafe-actions";
-import { InquiryStatusModel } from "../StatusList/InquiryStatusModel";
+import { StatusModel } from "./StatusModel";
 
 export enum CreateStatusActionTypes {
   CREATE_INQUIRY_STATUS_REQUEST = "@@CustomInquiryStatus/CREATE_INQUIRY_STATUS_REQUEST",
@@ -7,12 +7,12 @@ export enum CreateStatusActionTypes {
   CREATE_INQUIRY_STATUS_REQUEST_FAILED = "@@CustomInquiryStatus/CREATE_INQUIRY_STATUS_REQUEST_FAILED"
 }
 
-export const CreateRequestAction = (model: InquiryStatusModel) => ({
-  action: CreateStatusActionTypes.CREATE_INQUIRY_STATUS_REQUEST,
+export const CreateRequestAction = (model: StatusModel) => ({
+  type: CreateStatusActionTypes.CREATE_INQUIRY_STATUS_REQUEST,
   payload: model
 });
 
-export const CreateRequestSucceed = (data: InquiryStatusModel) =>
+export const CreateRequestSucceed = (data: StatusModel) =>
   action(CreateStatusActionTypes.CREATE_INQUIRY_STATUS_REQUEST_SUCCEED, data);
 
 export const CreateRequestFailed = (message: string) =>
