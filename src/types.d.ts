@@ -5,3 +5,4 @@ interface Window {
   }
 
   declare module 'remote-redux-devtools'
+  declare module 'react-color';

@@ -30,8 +30,11 @@ class CreateStatus extends Component<Props, IState> {
   }
 
   inItState(): IState {
+    
+    let statusModel = new StatusModel();
+    statusModel.color = "#a2744c";
     return {
-      statusModel: new StatusModel()
+      statusModel: statusModel
     };
   }
 
@@ -57,6 +60,7 @@ class CreateStatus extends Component<Props, IState> {
           this.state.isTitleUniuqueVerifyRequestInProgress
         }
         isTitleUnique={this.state.isTitleUnique}
+        saveStatus = {this.props.saveInquiryStatus}
       />
     );
   }
