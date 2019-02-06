@@ -28,10 +28,14 @@ interface IProp {
   saveStatus: (model:StatusModel) => void;
 }
 
-const EditableStatusFormikForm = (formikProps: FormikProps<StatusModel>, props:IProp) => (
+interface ICombineProp{
+  parentProps: IProp;
+  formikProps: FormikProps<StatusModel>
+}
+const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => (
   <Card>
     <CardHeader>
-      <strong>{props.formMode}</strong> Status
+      <strong>{parentProps.formMode}</strong> Status
     </CardHeader>
     <CardBody>
       <Form>
@@ -50,7 +54,7 @@ const EditableStatusFormikForm = (formikProps: FormikProps<StatusModel>, props:I
           <Label htmlFor="title">Title</Label> 
           </Col>
           <Col xs="2" sm="1">
-          { props.isTitleUniuqueVerifyRequestInProgress &&            
+          { parentProps.isTitleUniuqueVerifyRequestInProgress &&            
             <Spinner size="sm" color="primary"/>                
           }    
           </Col>
@@ -58,9 +62,9 @@ const EditableStatusFormikForm = (formikProps: FormikProps<StatusModel>, props:I
           <Input
             type="text"
             id="title"    
-            valid={props.isTitleUnique}        
+            valid={parentProps.isTitleUnique}        
             invalid={(formikProps.errors && formikProps.errors.title != undefined) 
-              || (props.isTitleUnique !== undefined && props.isTitleUnique === false)
+              || (parentProps.isTitleUnique !== undefined && parentProps.isTitleUnique === false)
               // formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined
             }
             value={formikProps.values.title}
@@ -73,31 +77,29 @@ const EditableStatusFormikForm = (formikProps: FormikProps<StatusModel>, props:I
               // this.validateTitle
               if (
                 ( !formikProps.errors || (formikProps.errors && !formikProps.errors.title)) &&
-                props.statusModel.title.toLowerCase() !=
+                parentProps.statusModel.title.toLowerCase() !=
                 formikProps.values.title.trim().toLowerCase()
               ) {
-                props.verifyUniqueTitle(formikProps.values.title);
+                parentProps.verifyUniqueTitle(formikProps.values.title);
               }
             }
           }
           />               
           <FormFeedback invalid="true" className="help-block">
-            {formikProps.errors.title ?  formikProps.errors.title : ((props.isTitleUnique !== undefined && props.isTitleUnique === false) ? 'title must be unique, there is already record exist with same title' : '')}
+            {formikProps.errors.title ?  formikProps.errors.title : ((parentProps.isTitleUnique !== undefined && parentProps.isTitleUnique === false) ? 'title must be unique, there is already record exist with same title' : '')}
           </FormFeedback>
         </FormGroup>
         <FormGroup>              
           <Label htmlFor="isActive">Active</Label>             
-          <CustomInput type="switch" id="isActive" name="isActive" 
+          <CustomInput type="switch" id="isActive" name="isActive"
             onChange={
-              e=>{
-              formikProps.handleChange(e);
+              e => {
+                formikProps.handleChange(e);
               }
             }
-            value={
-              formikProps.values.isActive ? "true" : "false"
-            }
-          />                                                  
-          
+            checked={formikProps.values.isActive}
+          />
+
         </FormGroup>
         <FormGroup>
           <Label htmlFor="description">Description</Label>
@@ -145,7 +147,7 @@ const EditableStatusForm: React.FunctionComponent<IProp> = (props: IProp) =>
       title: Yup.string().min(9).required()
     })}
 
-    component={(formikProps) => EditableStatusFormikForm(formikProps, props)}
+    component={(formikProps) => EditableStatusFormikForm({formikProps: formikProps, parentProps: props})}
   />
 
 export default EditableStatusForm;
