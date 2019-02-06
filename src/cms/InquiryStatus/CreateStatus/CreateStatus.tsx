@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import EditableStatus from "./EditableStatus";
+import EditableStatusForm from "./EditableStatusForm";
 import { StatusModel } from "./StatusModel";
 import { ApplicationState } from "../../../store";
 import { InquiryStatusModel } from "../StatusList/InquiryStatusModel";
@@ -40,11 +40,12 @@ class CreateStatus extends Component<Props, IState> {
 
   verifyUniqueTitle = (title: string) => {
     this.setState({
-      isTitleUniuqueVerifyRequestInProgress: true
+      isTitleUniuqueVerifyRequestInProgress: true,
+      isTitleUnique: undefined
     });
     setTimeout(() => {
       this.setState({
-        isTitleUnique: false,
+        isTitleUnique: true,
         isTitleUniuqueVerifyRequestInProgress: false
       });
     }, 2000);
@@ -52,7 +53,7 @@ class CreateStatus extends Component<Props, IState> {
 
   render() {
     return (
-      <EditableStatus
+      <EditableStatusForm
         formMode="Create"
         statusModel={this.state.statusModel}
         verifyUniqueTitle={this.verifyUniqueTitle}
