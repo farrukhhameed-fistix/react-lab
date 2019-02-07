@@ -6,12 +6,19 @@ import { InquiryStatusModel } from "../StatusList/InquiryStatusModel";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
 import { CreateRequestAction } from "./actions";
+import * as apiGateway from "../apiGateway";
+import ApiResult from '../ApiResult'
+import IApiCallState from "../ApiCallState";
 
 interface IState {
   statusModel: StatusModel;
   isTitleUnique?: boolean;
   isTitleUniuqueVerifyRequestInProgress?: boolean;
+  saveApiCallStatus: IApiCallState,
+  verifyTitleApiCallStatus: IApiCallState
 }
+
+
 
 interface IStateProp {
   inquiryStatusList: InquiryStatusModel[];
@@ -34,34 +41,128 @@ class CreateStatus extends Component<Props, IState> {
     let statusModel = new StatusModel();
     statusModel.color = "#a2744c";
     return {
-      statusModel: statusModel
+      statusModel: statusModel,
+      saveApiCallStatus: {},
+      verifyTitleApiCallStatus: {}
     };
   }
 
   verifyUniqueTitle = (title: string) => {
-    this.setState({
-      isTitleUniuqueVerifyRequestInProgress: true,
-      isTitleUnique: undefined
+    // this.setState({
+    //   isTitleUniuqueVerifyRequestInProgress: true,
+    //   isTitleUnique: undefined
+    // });
+
+    this.setState((prevState, props) => {
+      return {        
+        verifyTitleApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.verifyTitleApiCallStatus, {
+          isRequestInProgress: true,
+          isRequestSucceed: undefined,
+          message: undefined
+        })
+      };
     });
-    setTimeout(() => {
-      this.setState({
-        isTitleUnique: true,
-        isTitleUniuqueVerifyRequestInProgress: false
+
+    apiGateway.getStatusByTitle(title)
+      .then((result: ApiResult) => {
+
+        if (result.isSucceed && result.object) {
+
+          this.setState(((prevState, props) => {
+            return {
+              verifyTitleApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.verifyTitleApiCallStatus, {
+                isRequestInProgress: false,
+                isRequestSucceed: true,
+                message: 'Status with same title already exist'
+              })
+            }
+          }));
+        } else if (result.isSucceed && !result.object) {
+
+          this.setState(((prevState, props) => {
+            return {
+              verifyTitleApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.verifyTitleApiCallStatus, {
+                isRequestInProgress: false,
+                isRequestSucceed: true,
+                message: ''
+              })
+            }
+          }));
+        } else {
+          this.setState(((prevState, props) => {
+            return {
+              verifyTitleApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.verifyTitleApiCallStatus, {
+                isRequestInProgress: false,
+                isRequestSucceed: false,
+                message: undefined
+              })
+            }
+          }));
+        }        
+      }).catch(error => {
+
+        this.setState(((prevState, props) => {
+          return {
+            verifyTitleApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.verifyTitleApiCallStatus, {
+              isRequestInProgress: false,
+              isRequestSucceed: false,
+              message: undefined
+            })
+          }
+        }));
       });
-    }, 2000);
   };
+
+  saveInquiryStatus = (statusModel: StatusModel) => {
+
+    this.setState((prevState, props) => {
+      return {
+        saveApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.saveApiCallStatus, {
+          isRequestInProgress: true,
+          isRequestSucceed: undefined,
+          message: undefined
+        })
+      };
+    });
+
+    apiGateway.saveNewInquiryStatus(statusModel)
+      .then((result: ApiResult) => {
+
+        this.setState(((prevState, props) => {
+          return {
+            saveApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.saveApiCallStatus, {
+              isRequestInProgress: false,
+              isRequestSucceed: result.isSucceed,
+              message: result.message
+            })
+
+          }
+        }));
+      }).catch(error => {
+        this.setState(((prevState, props) => {
+          return {
+            saveApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.saveApiCallStatus, {
+              isRequestInProgress: false,
+              isRequestSucceed: false,
+              message: error
+            })
+          }
+        }));
+      });
+
+    // dispatch(CreateRequestAction(statusModel));
+  }
 
   render() {
     return (
       <EditableStatusForm
         formMode="Create"
         statusModel={this.state.statusModel}
-        verifyUniqueTitle={this.verifyUniqueTitle}
-        isTitleUniuqueVerifyRequestInProgress={
-          this.state.isTitleUniuqueVerifyRequestInProgress
-        }
+        verifyUniqueTitle={this.verifyUniqueTitle}        
         isTitleUnique={this.state.isTitleUnique}
-        saveStatus = {this.props.saveInquiryStatus}
+        saveStatus = {this.saveInquiryStatus}
+        saveApiCallStatus={this.state.saveApiCallStatus}
+        uniqueTitleVerifyApiCallStatus={this.state.verifyTitleApiCallStatus}
       />
     );
   }

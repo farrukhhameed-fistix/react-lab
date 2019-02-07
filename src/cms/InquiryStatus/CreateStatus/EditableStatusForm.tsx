@@ -18,14 +18,18 @@ import { Formik, Field, Form, FormikActions, ErrorMessage, FormikProps, FormikVa
 import {SketchPicker} from 'react-color';
 import * as Yup from 'yup';
 import { StatusModel } from "./StatusModel";
+import IApiCallState from "../ApiCallState";
 
 interface IProp {
   formMode: string;
   statusModel: StatusModel;
   isTitleUnique?: boolean;
-  isTitleUniuqueVerifyRequestInProgress?: boolean;
+  //isTitleUniuqueVerifyRequestInProgress?: boolean;
+  saveApiCallStatus: IApiCallState;
+  uniqueTitleVerifyApiCallStatus: IApiCallState;
+
   verifyUniqueTitle: (title: string) => void;
-  saveStatus: (model:StatusModel) => void;
+  saveStatus: (model:StatusModel) => void;  
 }
 
 interface ICombineProp{
@@ -54,7 +58,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
           <Label htmlFor="title">Title</Label> 
           </Col>
           <Col xs="2" sm="1">
-          { parentProps.isTitleUniuqueVerifyRequestInProgress &&            
+          { parentProps.uniqueTitleVerifyApiCallStatus.isRequestInProgress &&            
             <Spinner size="sm" color="primary"/>                
           }    
           </Col>
@@ -62,9 +66,9 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
           <Input
             type="text"
             id="title"    
-            valid={parentProps.isTitleUnique}        
+            valid={parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length == 0}        
             invalid={(formikProps.errors && formikProps.errors.title != undefined) 
-              || (parentProps.isTitleUnique !== undefined && parentProps.isTitleUnique === false)
+              || (parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0)
               // formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined
             }
             value={formikProps.values.title}
@@ -86,7 +90,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
           }
           />               
           <FormFeedback invalid="true" className="help-block">
-            {formikProps.errors.title ?  formikProps.errors.title : ((parentProps.isTitleUnique !== undefined && parentProps.isTitleUnique === false) ? 'title must be unique, there is already record exist with same title' : '')}
+            {formikProps.errors.title ?  formikProps.errors.title : ((parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0) ? parentProps.uniqueTitleVerifyApiCallStatus.message : '')}
           </FormFeedback>
         </FormGroup>
         <FormGroup>              
