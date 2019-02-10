@@ -1,6 +1,7 @@
 import { Reducer } from "redux";
 import { StatusListState, inItStatusListState } from "./StatusListState";
 import * as actionTypes from "./actions";
+import { stat } from "fs";
 
 
 const reducer: Reducer<StatusListState> = (state = inItStatusListState, action: actionTypes.StatusListActionCreatorTypes) => {
@@ -13,6 +14,9 @@ const reducer: Reducer<StatusListState> = (state = inItStatusListState, action: 
     }
     case actionTypes.StatusListActionTypes.FETCH_INQUIRY_STATUS_LIST_REQUEST_FAILED: {
       return { ...state, loading: false, errors: [action.payload] };
+    }
+    case actionTypes.StatusListActionTypes.ADD_INQUIRY_STATUS_TO_LIST: {      
+      return { ...state, statuses: [...state.statuses, action.payload]};
     }
     default: {
       return state;

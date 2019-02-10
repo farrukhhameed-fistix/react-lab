@@ -14,28 +14,31 @@ import {
   Button
 } from "reactstrap";
 
-import { Formik, Field, Form, FormikActions, ErrorMessage, FormikProps, FormikValues } from 'formik';
+import { Formik, Field, Form, FormikActions, ErrorMessage, FormikProps, FormikValues, FormikBag } from 'formik';
 import {SketchPicker} from 'react-color';
+import {toast} from 'react-toastify';
+
 import * as Yup from 'yup';
 import { StatusModel } from "./StatusModel";
 import IApiCallState from "../ApiCallState";
+import { Link } from "react-router-dom";
 
 interface IProp {
   formMode: string;
-  statusModel: StatusModel;
-  isTitleUnique?: boolean;
-  //isTitleUniuqueVerifyRequestInProgress?: boolean;
+  isFormReadonly?: boolean;
+  statusModel: StatusModel; 
   saveApiCallStatus: IApiCallState;
   uniqueTitleVerifyApiCallStatus: IApiCallState;
 
   verifyUniqueTitle: (title: string) => void;
   saveStatus: (model:StatusModel) => void;  
+  resetForm: ()=>void;
 }
-
 interface ICombineProp{
   parentProps: IProp;
   formikProps: FormikProps<StatusModel>
 }
+
 const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => (
   <Card>
     <CardHeader>
@@ -44,7 +47,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
     <CardBody>
       <Form>
         <FormGroup>
-          <Label htmlFor="id">Code</Label>
+          <Label htmlFor="id">Code</Label>{parentProps.statusModel.id}
           <Input
             type="text"
             id="id"          
@@ -67,7 +70,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
             type="text"
             id="title"    
             valid={parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length == 0}        
-            invalid={(formikProps.errors && formikProps.errors.title != undefined) 
+            invalid={(formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined) 
               || (parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0)
               // formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined
             }
@@ -76,18 +79,19 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
               formikProps.handleChange(e); 
               //this.updateFieldValue("title", e.target.value)
             }}
-            onBlur={ e => {
-              formikProps.handleBlur(e);
-              // this.validateTitle
-              if (
-                ( !formikProps.errors || (formikProps.errors && !formikProps.errors.title)) &&
-                parentProps.statusModel.title.toLowerCase() !=
-                formikProps.values.title.trim().toLowerCase()
-              ) {
-                parentProps.verifyUniqueTitle(formikProps.values.title);
+            onBlur={e => {
+              if (!parentProps.isFormReadonly) {
+                formikProps.handleBlur(e);
+                if (
+                  (!formikProps.errors || (formikProps.errors && !formikProps.errors.title)) &&
+                  parentProps.statusModel.title.toLowerCase() != formikProps.values.title.trim().toLowerCase()
+                ) {
+                  parentProps.verifyUniqueTitle(formikProps.values.title);
+                }
               }
             }
           }
+          readOnly={parentProps.uniqueTitleVerifyApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}
           />               
           <FormFeedback invalid="true" className="help-block">
             {formikProps.errors.title ?  formikProps.errors.title : ((parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0) ? parentProps.uniqueTitleVerifyApiCallStatus.message : '')}
@@ -101,7 +105,9 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
                 formikProps.handleChange(e);
               }
             }
+            onBlur={formikProps.handleBlur}
             checked={formikProps.values.isActive}
+            disabled={parentProps.isFormReadonly}            
           />
 
         </FormGroup>
@@ -113,6 +119,8 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
             invalid={formikProps.touched && formikProps.touched.description && formikProps.errors && formikProps.errors.description != undefined}
             value={formikProps.values.description}
             onChange={formikProps.handleChange}
+            onBlur={formikProps.handleBlur}
+            readOnly={parentProps.isFormReadonly}
           />
         </FormGroup>
         <FormGroup>
@@ -125,25 +133,51 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
             onChangeComplete={(color:any) => {
               formikProps.setFieldValue("color", color.hex)
             }}
+            onBlur={formikProps.handleBlur}
+            readOnly={parentProps.isFormReadonly}
           />             
         </FormGroup>
         <div className="form-actions">
-          <Button type="submit" color="primary">Save changes</Button>
-          <Button color="secondary">Cancel</Button>
-        </div>
-        
+          <Button className="mr-1" type="submit" color="primary" disabled={parentProps.saveApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}>Submit</Button>
+
+          {
+            parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&
+            <Link to={`/cms/settings/inquiry-status/edit/${formikProps.values.id}`} >
+              <Button className="mr-1" color="primary">Edit</Button>
+            </Link>
+          }
+
+          {
+            parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&            
+            <Button className="mr-1" color="primary" onClick={
+              () => {
+                formikProps.resetForm();
+                parentProps.resetForm();
+              }
+            }>Add Another Status</Button>
+          }
+
+          <Link to="/cms/settings/inquiry-status">
+            <Button className="mr-1" color="secondary" disabled={parentProps.saveApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}>Cancel</Button>
+          </Link>
+
+          { 
+            parentProps.saveApiCallStatus.isRequestInProgress &&            
+            <Spinner size="lg" color="primary"/>                
+          }
+        </div>                                    
       </Form>
     </CardBody>
   </Card>
 )
 
 const EditableStatusForm: React.FunctionComponent<IProp> = (props: IProp) =>
-  <Formik
+  <Formik    
     initialValues={props.statusModel}
-    
+    enableReinitialize = {true}
     onSubmit={(values: StatusModel, { setSubmitting }: FormikActions<StatusModel>) => {
       console.log(values);
-      props.saveStatus(values);
+      props.saveStatus(values);      
     }}
 
     validationSchema={Yup.object().shape({

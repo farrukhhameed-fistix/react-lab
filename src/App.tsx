@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
 // import { renderRoutes } from 'react-router-config';
 import Loadable from 'react-loadable';
-import './App.scss';
 
+import './App.scss';
 // sidebar nav config
 import navigation from './cms/_nav';
 // routes config
@@ -73,8 +73,8 @@ class App extends Component {
             <Route exact path="/500" name="Page 500" component={Page500} />
             <Route path="/cms" name="CMS" component={CmsLayout} />
             <Route path="/lms" name="LMS" component={LmsLayout} />
-            <Redirect exact from="/" to="/login" />
-          </Switch>
+            <Redirect exact from="/" to="/login" />                      
+          </Switch>                    
       </HashRouter>
     );
   }

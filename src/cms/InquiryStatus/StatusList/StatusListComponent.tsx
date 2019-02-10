@@ -44,7 +44,9 @@ class StatusListComponent extends Component<Props, IState> {
   }
 
   componentDidMount = () => {    
+    if (!this.props.statuses || this.props.statuses.length <= 0){
      this.props.getAllStatuses();    
+    }
   };
 
   render() {

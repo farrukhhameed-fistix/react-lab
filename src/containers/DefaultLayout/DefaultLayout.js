@@ -1,7 +1,7 @@
 import React, { Component, Suspense } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Container } from 'reactstrap';
-
+import {ToastContainer} from 'react-toastify';
 import {
   AppAside,
   AppBreadcrumb,
@@ -18,6 +18,7 @@ import {
 import navigation from '../../_nav';
 // routes config
 import routes from '../../routes';
+
 
 const DefaultAside = React.lazy(() => import('./DefaultAside'));
 const DefaultFooter = React.lazy(() => import('./DefaultFooter'));
@@ -71,7 +72,7 @@ class DefaultLayout extends Component {
                   })}
                   {/* <Redirect exact from="/cms" to="/cms/dashboard" /> */}
                 </Switch>
-              </Suspense>
+              </Suspense>                           
             </Container>
           </main>
           <AppAside fixed>
@@ -84,7 +85,8 @@ class DefaultLayout extends Component {
           <Suspense fallback={this.loading()}>
             <DefaultFooter />
           </Suspense>
-        </AppFooter>
+        </AppFooter>                
+        <ToastContainer/>
       </div>
     );
   }
