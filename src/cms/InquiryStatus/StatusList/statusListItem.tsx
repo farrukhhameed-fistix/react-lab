@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const StatusListItem: React.SFC<InquiryStatusModel> = (props) =>{
     const statusModel = props;
-    const statusLink = `/cms/settings/inquiry-status/${statusModel.id}`
+    const statusLink = `/cms/settings/inquiry-status/edit/${statusModel.id}`
     return <tr key={statusModel.id.toString()}>
     <th scope="row"><Link to={statusLink}>{statusModel.id}</Link></th>
     <td><Link to={statusLink}>{statusModel.title}</Link></td>
