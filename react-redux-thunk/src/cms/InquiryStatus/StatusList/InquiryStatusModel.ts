@@ -4,6 +4,7 @@ export class InquiryStatusModel{
     description: string = "";
     color: string = "";
     orderIndex: number | undefined
+    isActive: boolean =false;
 
     constructor(id: number, title: string, color: string){
         this.id = id;

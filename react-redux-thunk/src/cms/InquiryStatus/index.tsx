@@ -1,3 +1,3 @@
-export * from './InquiryStatusState'
-export * from './InquiryStatusRootReducer'
+export * from './store/InquiryStatusState'
+export * from './store/InquiryStatusRootReducer'
 export * from './routes'

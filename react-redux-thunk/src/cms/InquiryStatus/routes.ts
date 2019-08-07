@@ -8,6 +8,10 @@ const InquiryStatusCreatePage = React.lazy(() =>
   import("./CreateStatus/CreateStatusPage")
 );
 
+const InquiryStatusEditPage = React.lazy(() =>
+  import("./EditStatus/EditStatusPage")
+);
+
 const routes = [
   {
     path: "/cms/settings",
@@ -25,6 +29,11 @@ const routes = [
     path: "/cms/settings/inquiry-status/create",
     name: "Create Inquiry Status",
     component: InquiryStatusCreatePage
+  },
+  {
+    path: "/cms/settings/inquiry-status/edit/:id",
+    name: "Edit Inquiry Status",
+    component: InquiryStatusEditPage
   }
 ];
 

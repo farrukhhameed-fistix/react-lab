@@ -2,6 +2,7 @@ import { Store, createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import { composeWithDevTools } from "redux-devtools-extension";
 import { ApplicationState, rootReducer } from "./store";
+import { initApplicationState } from "./store";
 
 //import { connectRouter, routerMiddleware } from 'connected-react-router'
 //import { composeWithDevTools } from 'redux-devtools-extension'
@@ -9,7 +10,7 @@ import { ApplicationState, rootReducer } from "./store";
 //import {ApplicationState} from './store/ApplicationState'
 //import { rootReducer } from './store/RootReducer';
 
-export default function configureStore(
+function configureStore(
   initialState: ApplicationState
 ): Store<ApplicationState> {
   
@@ -28,3 +29,6 @@ export default function configureStore(
   );
   return store;
 }
+
+var AppStore = configureStore(initApplicationState());
+export default AppStore;

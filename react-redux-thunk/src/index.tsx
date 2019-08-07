@@ -2,22 +2,22 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 
-import configureStore from "./configureStore";
+import AppStore from "./configureStore";
 import { initApplicationState } from "./store";
 
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
-var store = configureStore(initApplicationState());
-store.subscribe(() => {
-  console.log(store.getState());
+//var store = configureStore(initApplicationState());
+AppStore.subscribe(() => {
+  console.log(AppStore.getState());
   //TODO: save in local storage
 
 });
 
 ReactDOM.render(
-  <Provider store={store}>
+  <Provider store={AppStore}>
     <App />
   </Provider>,
   document.getElementById("root")

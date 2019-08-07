@@ -5,32 +5,37 @@ import { ApplicationState } from "../../../store";
 import { InquiryStatusModel } from "../StatusList/InquiryStatusModel";
 import { Dispatch } from "redux";
 import { connect } from "react-redux";
-import { AddInquiryStatusToList } from "../StatusList/actions";
+import { UpdateInquiryStatusToList } from "../StatusList/actions";
 import * as apiGateway from "../Shared/ApiGateway";
 import ApiResult from '../Shared/ApiResult'
 import IApiCallState from "../Shared/ApiCallState";
 import { toast } from "react-toastify";
+import {getStatusById} from '../Shared/Service';
 
 interface IState {
   statusModel: StatusViewModel;  
+  loadApiCallStatus: IApiCallState,
   saveApiCallStatus: IApiCallState,
   verifyTitleApiCallStatus: IApiCallState
   formReadonly?: boolean;
 }
 
 
+interface IProp {
+  id: number;
+}
 
 interface IStateProp {
   inquiryStatusList: InquiryStatusModel[];
 }
 
 interface IDispatchProp {
-  AddInquiryStatusToList: (statusModel: StatusViewModel) => void;
+  UpdateInquiryStatusInList: (statusModel: StatusViewModel) => void;
 }
 
-type Props = IStateProp & IDispatchProp;
+type Props = IProp & IStateProp & IDispatchProp;
 
-class CreateStatus extends Component<Props, IState> {  
+class EditStatus extends Component<Props, IState> {  
   toastId: number = -1;
 
   constructor(props: Props) {
@@ -44,9 +49,10 @@ class CreateStatus extends Component<Props, IState> {
     statusModel.color = "#a2744c";
     return {
       statusModel: statusModel,
+      loadApiCallStatus: {},
       saveApiCallStatus: {},
       verifyTitleApiCallStatus: {},
-      formReadonly: false
+      formReadonly: true
     };
   }
 
@@ -124,7 +130,7 @@ class CreateStatus extends Component<Props, IState> {
       };
     });
 
-    apiGateway.saveNewInquiryStatus(statusModel)
+    apiGateway.updateInquiryStatus(statusModel)
       .then((result: ApiResult) => {
         let isFormReadonly = this.state.formReadonly;
         let statusModel = this.state.statusModel;
@@ -132,7 +138,7 @@ class CreateStatus extends Component<Props, IState> {
         if (result.isSucceed){
           if(result.object){            
             statusModel = result.object;
-            this.props.AddInquiryStatusToList(result.object);
+            this.props.UpdateInquiryStatusInList(result.object);
           }
           this.toastId = this.showNotify(this.toastId, true, "Record saved successfully");
           isFormReadonly = true;
@@ -197,6 +203,56 @@ class CreateStatus extends Component<Props, IState> {
     return toastId;
   };
 
+  componentDidMount(){
+    this.setState((prevState, props) => {
+      return {        
+        loadApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.loadApiCallStatus, {
+          isRequestInProgress: true,
+          isRequestSucceed: undefined,
+          message: undefined
+        })
+      };
+    });
+
+    getStatusById(this.props.id).then(result => {
+
+      if (result.isSucceed && result.object) {
+      
+          let model = new StatusViewModel();
+          model.id = result.object.id;
+          model.title = result.object.title;
+          model.color = result.object.color;
+          model.isActive = result.object.isActive;               
+        
+
+        this.setState(((prevState, props) => {
+          return {
+            loadApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.loadApiCallStatus, {
+              isRequestInProgress: false,
+              isRequestSucceed: true,
+              message: ''
+            }),
+            statusModel: model,
+            formReadonly: false
+          }
+        }));
+      } else{
+
+        this.setState(((prevState, props) => {
+          return {
+            loadApiCallStatus: Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, prevState.loadApiCallStatus, {
+              isRequestInProgress: false,
+              isRequestSucceed: result.isSucceed,
+              message: result.message
+            })
+          }
+        }));
+
+      }
+
+      
+    });
+  } 
   render() {
     return (
       <EditableStatusForm
@@ -213,26 +269,13 @@ class CreateStatus extends Component<Props, IState> {
   }
 }
 
-const mapStateToProps = (appState: ApplicationState): IStateProp => {
-  return {
-    inquiryStatusList: appState.InquiryStatus.inquiryStatusList.statuses
-  };
-};
+
 const mapDispatchToProps = (dispatch: Dispatch): IDispatchProp => ({
-  AddInquiryStatusToList: (model: InquiryStatusModel) => dispatch(AddInquiryStatusToList(model))
+  UpdateInquiryStatusInList: (model: InquiryStatusModel) => dispatch(UpdateInquiryStatusToList(model))
 })
 
-const mapDispatchToProps2 = (dispatch: Dispatch): IDispatchProp => {
-  return {
-    AddInquiryStatusToList: (model: InquiryStatusModel) => dispatch(AddInquiryStatusToList(model))
-  }
-};
-
-const mapDispatchToProps1:IDispatchProp = ({
-  AddInquiryStatusToList: AddInquiryStatusToList
-});
 
 export default connect<IStateProp, IDispatchProp, any, ApplicationState>(
-  mapStateToProps,
+  null,
   mapDispatchToProps
-)(CreateStatus);
+)(EditStatus);
