@@ -13,27 +13,9 @@ import routes from './cms/routes';
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
 // Containers
-// const CmsLayout = Loadable({
-//   loader: () => import('./containers/DefaultLayout'),
-//   loading
-// });
 
 const CmsLayout = Loadable({
   loader: () => import('./cms/CmsLayout'),
-  loading
-});
-
-// const CmsLayout = Loadable({
-//   loader: () => import('./containers/DefaultLayout'),
-//   loading,
-//   render(loaded, props) {
-//     let Component = loaded.default;
-//     return <Component {...props} navigation={navigation} routes={routes}  />;
-//   }
-// });
-
-const LmsLayout = Loadable({
-  loader: () => import('./lms/LmsLayout'),
   loading
 });
 
@@ -48,15 +30,6 @@ const Register = Loadable({
   loading
 });
 
-const Page404 = Loadable({
-  loader: () => import('./views/Pages/Page404'),
-  loading
-});
-
-const Page500 = Loadable({
-  loader: () => import('./views/Pages/Page500'),
-  loading
-});
 
 interface IAppProp{
   Store: any
@@ -69,10 +42,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/login" name="Login Page" component={Login} />
             <Route exact path="/register" name="Register Page" component={Register} />
-            <Route exact path="/404" name="Page 404" component={Page404} />
-            <Route exact path="/500" name="Page 500" component={Page500} />
             <Route path="/cms" name="CMS" component={CmsLayout} />
-            <Route path="/lms" name="LMS" component={LmsLayout} />
             <Redirect exact from="/" to="/login" />                      
           </Switch>                    
       </HashRouter>
