@@ -44,3 +44,19 @@ export function fetchStatusById(id: number): Promise<ApiResult> {
 
     return promise;
 }
+
+export function fetchAllStatuses(): Promise<ApiResult> {
+    let promise: Promise<ApiResult> = new Promise<ApiResult>((reslove, reject) => {
+        setTimeout(() => {
+            
+            let model = new Array<InquiryStatusModel>();
+            model.push(new InquiryStatusModel(1,"test", ''));
+            model.push(new InquiryStatusModel(2,"test2", ''));
+            model.push(new InquiryStatusModel(3,"test3", ''));
+            
+            reslove({ isSucceed: true, object:model});
+        }, 2000);
+    });
+
+    return promise;
+}

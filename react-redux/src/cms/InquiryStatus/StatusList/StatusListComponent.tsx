@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { Alert, Card, CardBody, CardHeader, Col, Row, Table, Button } from "reactstrap";
 import Loader from 'react-loader'
 
-import { FetchListRequestSucceed } from "./actions";
+import { FetchListRequestSucceed, FetchListRequest } from "./actions";
 import { InquiryStatusModel } from "./InquiryStatusModel";
 import StatusListItem from "./statusListItem";
 import { ApplicationState } from "../../../store";
@@ -106,9 +106,10 @@ const mapStateToProps = (state: ApplicationState, ownProps: IOwnProps): IStatePr
 
 const mapDispatchToProps = (dispatch: ThunkDispatch<{}, {}, any>,ownProps: IOwnProps): IDispatchProps => {
   return {
-    getAllStatuses: async () => {
-      dispatch(FetchListRequestThunk())      
-    } 
+    getAllStatuses: () => dispatch(FetchListRequest())
+    // getAllStatuses: async () => {
+    //   dispatch(FetchListRequestThunk())      
+    // } 
   };
 };
 
