@@ -34,8 +34,8 @@ class DefaultLayout extends Component {
   }
 
   render() {
-    let navigation = this.props.navigation1;
-    let routes = this.props.routes1;
+    let navigation = this.props.navigation;
+    let routes = this.props.routes;
     return (
       <div className="app">
         <AppHeader fixed>

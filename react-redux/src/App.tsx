@@ -1,50 +1,30 @@
 import React, { Component } from 'react';
 import { HashRouter, Route, Switch, Redirect } from 'react-router-dom';
-// import { renderRoutes } from 'react-router-config';
-import Loadable from 'react-loadable';
-
 import './App.scss';
-// sidebar nav config
-import navigation from './cms/_nav';
-// routes config
-import routes from './cms/routes';
-
 
 const loading = () => <div className="animated fadeIn pt-3 text-center">Loading...</div>;
 
 // Containers
-
-const CmsLayout = Loadable({
-  loader: () => import('./cms/CmsLayout'),
-  loading
-});
-
+const CmsLayout = React.lazy(() => import('./cms/CmsLayout'));
 // Pages
-const Login = Loadable({
-  loader: () => import('./views/Pages/Login'),
-  loading
-});
 
-const Register = Loadable({
-  loader: () => import('./views/Pages/Register'),
-  loading
-});
+const Login = React.lazy(() => import('./views/Pages/Login'));
+const Register = React.lazy(() => import('./views/Pages/Register'));
 
 
-interface IAppProp{
-  Store: any
-}
-class App extends Component {
+class App extends Component{
 
   render() {
     return (
       <HashRouter>
+        <React.Suspense fallback={loading()}>
           <Switch>
             <Route exact path="/login" name="Login Page" component={Login} />
             <Route exact path="/register" name="Register Page" component={Register} />
             <Route path="/cms" name="CMS" component={CmsLayout} />
             <Redirect exact from="/" to="/login" />                      
           </Switch>                    
+        </React.Suspense>
       </HashRouter>
     );
   }
