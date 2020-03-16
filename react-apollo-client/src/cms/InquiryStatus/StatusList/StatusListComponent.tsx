@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader, Col, Row, Table, Button, Spinner } from "re
 import { Message, IMessage, MessageType } from "../../../shared/components/Message";
 import { Link, useRouteMatch } from "react-router-dom";
 import { InquiryStatusModel } from './InquiryStatusModel';
-import StatusListItem from "./statusListItem";
+import StatusListItem from "./StatusListItem";
 
 
 interface IProps {
