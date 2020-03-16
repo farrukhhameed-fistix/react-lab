@@ -12,15 +12,9 @@ const InquiryStatusListPage = React.lazy(() =>
 //   import("./EditStatus/EditStatusPage")
 // );
 
-const routes = [
+const routes = [  
   {
-    path: "/cms/settings",
-    exact: true,
-    name: "Setting",
-    component: InquiryStatusListPage
-  },
-  {
-    path: "/cms/settings/inquiry-status",
+    path: "/cms/inquiry-status",
     exact: true,
     name: "Inquiry Status List",
     component: InquiryStatusListPage

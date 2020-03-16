@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import StatusListComponent from "./StatusListComponent";
+import StatusListContainer from "./StatusListContainer";
 
 
 export default class StatusListPage extends Component<any,any>{
@@ -10,7 +10,7 @@ export default class StatusListPage extends Component<any,any>{
     render(){
         return(
             <React.Fragment>
-                <StatusListComponent statuses={[]} showLoader={false} errors={[]}/>
+                <StatusListContainer />
             </React.Fragment>
         );
     }

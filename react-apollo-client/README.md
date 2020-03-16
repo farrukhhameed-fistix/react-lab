@@ -37,8 +37,12 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
+## `apollo server`
+using json graphql server with this project
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+yarn global add json-graphql-server
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+run following in root folder React-APOLLO_CLIENT
+json-graphql-server db.js --p 3001
+
+GraphiQL at http://localhost:3001

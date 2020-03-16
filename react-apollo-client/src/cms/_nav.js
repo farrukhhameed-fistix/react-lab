@@ -1,18 +1,8 @@
 export default {
-  items: [
-    {
-      name: 'Settings',
-      url: '/cms/settings',
-      // title: true,
-      icon: 'icon-speedometer',
-      badge: {
-        variant: 'info',
-        text: 'NEW',
-      },
-    },    
+  items: [    
     {
       name: 'InquiryStatus',
-      url: '/cms/settings/inquiry-status',
+      url: '/cms/inquiry-status',
       icon: 'icon-star',
     },
   ],

@@ -18,8 +18,8 @@ export const Message: FunctionComponent<IProp> = props => {
   return (
     <Fragment>
       {props.messages &&
-        props.messages.map(message => {
-          return <Alert color={message.type}>{message.message}</Alert>;
+        props.messages.map((message, index) => {
+          return <Alert key={index} color={message.type}>{message.message}</Alert>;
         })}
     </Fragment>
   );
