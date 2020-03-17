@@ -1,5 +1,5 @@
 export class InquiryStatusModel{
-    id: number = 1;
+    id: string = "";
     title: string = "";
     description: string = "";
     color: string = "";

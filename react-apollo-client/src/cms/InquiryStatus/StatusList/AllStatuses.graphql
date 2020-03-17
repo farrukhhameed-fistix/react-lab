@@ -1,0 +1,9 @@
+query AllStatuses{
+  allStatuses{
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}
