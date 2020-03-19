@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
-import * as React from 'react';
 import * as ApolloReactCommon from '@apollo/react-common';
+import * as React from 'react';
 import * as ApolloReactComponents from '@apollo/react-components';
 import * as ApolloReactHoc from '@apollo/react-hoc';
 import * as ApolloReactHooks from '@apollo/react-hooks';
@@ -105,6 +105,24 @@ export type StatusFilter = {
   orderIndex_gte?: Maybe<Scalars['Int']>;
 };
 
+export type CreateStatusMutationVariables = {
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  color: Scalars['String'];
+  orderIndex: Scalars['Int'];
+  isActive: Scalars['Boolean'];
+};
+
+
+export type CreateStatusMutation = (
+  { __typename?: 'Mutation' }
+  & { createStatus: Maybe<(
+    { __typename?: 'Status' }
+    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex'>
+  )> }
+);
+
 export type AllStatusesQueryVariables = {};
 
 
@@ -117,6 +135,64 @@ export type AllStatusesQuery = (
 );
 
 
+export const CreateStatusDocument = gql`
+    mutation CreateStatus($id: ID!, $title: String!, $description: String!, $color: String!, $orderIndex: Int!, $isActive: Boolean!) {
+  createStatus(id: $id, title: $title, description: $description, color: $color, orderIndex: $orderIndex, isActive: $isActive) {
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}
+    `;
+export type CreateStatusMutationFn = ApolloReactCommon.MutationFunction<CreateStatusMutation, CreateStatusMutationVariables>;
+export type CreateStatusComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<CreateStatusMutation, CreateStatusMutationVariables>, 'mutation'>;
+
+    export const CreateStatusComponent = (props: CreateStatusComponentProps) => (
+      <ApolloReactComponents.Mutation<CreateStatusMutation, CreateStatusMutationVariables> mutation={CreateStatusDocument} {...props} />
+    );
+    
+export type CreateStatusProps<TChildProps = {}> = ApolloReactHoc.MutateProps<CreateStatusMutation, CreateStatusMutationVariables> & TChildProps;
+export function withCreateStatus<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  CreateStatusMutation,
+  CreateStatusMutationVariables,
+  CreateStatusProps<TChildProps>>) {
+    return ApolloReactHoc.withMutation<TProps, CreateStatusMutation, CreateStatusMutationVariables, CreateStatusProps<TChildProps>>(CreateStatusDocument, {
+      alias: 'createStatus',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useCreateStatusMutation__
+ *
+ * To run a mutation, you first call `useCreateStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createStatusMutation, { data, loading, error }] = useCreateStatusMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *      color: // value for 'color'
+ *      orderIndex: // value for 'orderIndex'
+ *      isActive: // value for 'isActive'
+ *   },
+ * });
+ */
+export function useCreateStatusMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateStatusMutation, CreateStatusMutationVariables>) {
+        return ApolloReactHooks.useMutation<CreateStatusMutation, CreateStatusMutationVariables>(CreateStatusDocument, baseOptions);
+      }
+export type CreateStatusMutationHookResult = ReturnType<typeof useCreateStatusMutation>;
+export type CreateStatusMutationResult = ApolloReactCommon.MutationResult<CreateStatusMutation>;
+export type CreateStatusMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateStatusMutation, CreateStatusMutationVariables>;
 export const AllStatusesDocument = gql`
     query AllStatuses {
   allStatuses {

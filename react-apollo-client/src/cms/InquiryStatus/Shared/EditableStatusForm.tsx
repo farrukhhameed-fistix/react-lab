@@ -142,7 +142,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
 
           {
             parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&
-            <Link to={`/cms/settings/inquiry-status/edit/${formikProps.values.id}`} >
+            <Link to={`/cms/inquiry-status/edit/${formikProps.values.id}`} >
               <Button className="mr-1" color="primary">Edit</Button>
             </Link>
           }
@@ -157,7 +157,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
             }>Add Another Status</Button>
           }
 
-          <Link to="/cms/settings/inquiry-status">
+          <Link to="/cms/inquiry-status">
             <Button className="mr-1" color="secondary" disabled={parentProps.saveApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}>Cancel</Button>
           </Link>
 

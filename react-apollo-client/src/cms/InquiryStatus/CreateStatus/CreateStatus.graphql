@@ -1,0 +1,9 @@
+mutation CreateStatus($id:ID!, $title: String!, $description: String!, $color: String!, $orderIndex: Int!, $isActive: Boolean!){
+  createStatus(id:$id, title: $title, description: $description, color: $color, orderIndex: $orderIndex, isActive: $isActive){
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}
