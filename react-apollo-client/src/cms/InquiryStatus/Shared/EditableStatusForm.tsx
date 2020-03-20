@@ -41,6 +41,7 @@ interface ICombineProp{
 
 const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => (
   <Card>
+
     <CardHeader>
       <strong>{parentProps.formMode}</strong> Status
     </CardHeader>
@@ -158,7 +159,7 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
           }
 
           <Link to="/cms/inquiry-status">
-            <Button className="mr-1" color="secondary" disabled={parentProps.saveApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}>Cancel</Button>
+            <Button className="mr-1" color="secondary" disabled={parentProps.saveApiCallStatus.isRequestInProgress}>Cancel</Button>
           </Link>
 
           { 

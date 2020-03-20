@@ -1,0 +1,9 @@
+query FilterStatuses($filter: StatusFilter){
+  allStatuses(filter: $filter){
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}

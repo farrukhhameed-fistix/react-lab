@@ -123,6 +123,19 @@ export type CreateStatusMutation = (
   )> }
 );
 
+export type FilterStatusesQueryVariables = {
+  filter?: Maybe<StatusFilter>;
+};
+
+
+export type FilterStatusesQuery = (
+  { __typename?: 'Query' }
+  & { allStatuses: Maybe<Array<Maybe<(
+    { __typename?: 'Status' }
+    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex'>
+  )>>> }
+);
+
 export type AllStatusesQueryVariables = {};
 
 
@@ -193,6 +206,60 @@ export function useCreateStatusMutation(baseOptions?: ApolloReactHooks.MutationH
 export type CreateStatusMutationHookResult = ReturnType<typeof useCreateStatusMutation>;
 export type CreateStatusMutationResult = ApolloReactCommon.MutationResult<CreateStatusMutation>;
 export type CreateStatusMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateStatusMutation, CreateStatusMutationVariables>;
+export const FilterStatusesDocument = gql`
+    query FilterStatuses($filter: StatusFilter) {
+  allStatuses(filter: $filter) {
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}
+    `;
+export type FilterStatusesComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<FilterStatusesQuery, FilterStatusesQueryVariables>, 'query'>;
+
+    export const FilterStatusesComponent = (props: FilterStatusesComponentProps) => (
+      <ApolloReactComponents.Query<FilterStatusesQuery, FilterStatusesQueryVariables> query={FilterStatusesDocument} {...props} />
+    );
+    
+export type FilterStatusesProps<TChildProps = {}> = ApolloReactHoc.DataProps<FilterStatusesQuery, FilterStatusesQueryVariables> & TChildProps;
+export function withFilterStatuses<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  FilterStatusesQuery,
+  FilterStatusesQueryVariables,
+  FilterStatusesProps<TChildProps>>) {
+    return ApolloReactHoc.withQuery<TProps, FilterStatusesQuery, FilterStatusesQueryVariables, FilterStatusesProps<TChildProps>>(FilterStatusesDocument, {
+      alias: 'filterStatuses',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useFilterStatusesQuery__
+ *
+ * To run a query within a React component, call `useFilterStatusesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFilterStatusesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFilterStatusesQuery({
+ *   variables: {
+ *      filter: // value for 'filter'
+ *   },
+ * });
+ */
+export function useFilterStatusesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FilterStatusesQuery, FilterStatusesQueryVariables>) {
+        return ApolloReactHooks.useQuery<FilterStatusesQuery, FilterStatusesQueryVariables>(FilterStatusesDocument, baseOptions);
+      }
+export function useFilterStatusesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FilterStatusesQuery, FilterStatusesQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<FilterStatusesQuery, FilterStatusesQueryVariables>(FilterStatusesDocument, baseOptions);
+        }
+export type FilterStatusesQueryHookResult = ReturnType<typeof useFilterStatusesQuery>;
+export type FilterStatusesLazyQueryHookResult = ReturnType<typeof useFilterStatusesLazyQuery>;
+export type FilterStatusesQueryResult = ApolloReactCommon.QueryResult<FilterStatusesQuery, FilterStatusesQueryVariables>;
 export const AllStatusesDocument = gql`
     query AllStatuses {
   allStatuses {

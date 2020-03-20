@@ -11,8 +11,8 @@ function StatusListContainerUsingHook(){
     let errors:string[] = [];    
     let statuses:InquiryStatusModel[] = [];
 
-    const { loading, error, data } = useQuery<AllStatusesQuery>(AllStatusesDocument);    
-    //const { data, loading, error } = useAllStatusesQuery();
+    //const { loading, error, data } = useQuery<AllStatusesQuery>(AllStatusesDocument);    
+    const { data, loading, error } = useAllStatusesQuery();
 
     if (error) {        
         errors.push(error.message);

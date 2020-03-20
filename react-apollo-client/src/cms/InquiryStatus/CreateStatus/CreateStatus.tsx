@@ -1,109 +1,133 @@
-import React, { Component, FunctionComponent, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import EditableStatusForm from "../Shared/EditableStatusForm";
 import { StatusViewModel } from "../Shared/StatusViewModel";
-//import { ApplicationState } from "../../../store";
-import { InquiryStatusModel } from "../StatusList/InquiryStatusModel";
-//import { Dispatch } from "redux";
-//import { connect } from "react-redux";
-//import { AddInquiryStatusToList } from "../StatusList/actions";
-//import * as apiGateway from "../Shared/ApiGateway";
-import ApiResult from '../Shared/ApiResult'
+
 import IApiCallState from "../Shared/ApiCallState";
 import { toast } from "react-toastify";
-import {CreateStatusComponent, useCreateStatusMutation, CreateStatusMutation, CreateStatusDocument, AllStatusesDocument} from '../../../generated/graphql';
+import {CreateStatusComponent, useCreateStatusMutation, CreateStatusMutation, CreateStatusDocument, AllStatusesDocument, AllStatusesQuery, useFilterStatusesQuery, useFilterStatusesLazyQuery} from '../../../generated/graphql';
 import { useMutation } from "@apollo/react-hooks";
 import random from 'random';
-import { ApolloError } from "apollo-boost";
 import { GraphQLError } from "graphql/error/GraphQLError";
-
-interface IState {
-  statusModel: StatusViewModel;  
-  saveApiCallStatus: IApiCallState,
-  verifyTitleApiCallStatus: IApiCallState
-  formReadonly?: boolean;
-}
-
-
-
-interface IStateProp {
-  inquiryStatusList: InquiryStatusModel[];
-}
-
-interface IDispatchProp {
-  AddInquiryStatusToList: (statusModel: StatusViewModel) => void;
-}
-
-type Props = IStateProp //& IDispatchProp;
 
 const CreateStatus:React.FC = () => {
 
+  let toastId:any = null;
   let statusVM = new StatusViewModel();
   statusVM.color = "#a2744c";
 
-  const [statusModel, setStatusModel] = useState(statusVM);
-  //const [saveApiCallStatus, setSaveApiCallStatus] = useState({});  
-  const [verifyTitleApiCallStatus, setVerifyTitleApiCallStatus] = useState({});
-  const [formReadonly, setFormReadonly] = useState(false);
-  //const [saveApiCallStatus, setSaveApiCallStatus] = useState({});  
+  const [statusModel, setStatusModel] = useState(statusVM);  
+  //const [verifyTitleApiCallStatus, setVerifyTitleApiCallStatus] = useState({});
+  const [formReadonly, setFormReadonly] = useState(false);  
+  const [isRequestSucceed, setIsRequestSucceed] = useState<boolean>();  
+  const [isVerifyTitleRequestSucceed, setIsVerifyTitleRequestSucceed] = useState<boolean>();  
+  const [verifyTitleRequestMessage, setVerifyTitleRequestMessage] = useState<string>();
+
   
+  const [addStatus, { loading: mutationLoading, error: mutationError }] = useCreateStatusMutation({ 
+    update(cache, { data }){    
+      if(data){
+        const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
+        if(cacheData && cacheData.allStatuses){
+          
+          cacheData.allStatuses.push(data.createStatus);
+
+          cache.writeQuery({
+            query: AllStatusesDocument,
+            data: cacheData,
+          });
+        }
+      }
+    }  
+  });
+
+  const [filterTheStatuses, {loading: filterStatusQueryLoading, error: filterStatusQueryError, data: filterStatusesQueryData }] = useFilterStatusesLazyQuery();
+
+  useEffect(()=>{
+    let messages = "";                                                        
+    if (filterStatusQueryError && filterStatusQueryError.graphQLErrors) {        
+      filterStatusQueryError.graphQLErrors.forEach((err:GraphQLError) => {
+          messages = messages + err.message;
+      });
+    }
+    setVerifyTitleRequestMessage(messages);
+    if (!filterStatusQueryLoading && (!messages || messages.length < 1)){
+      setIsVerifyTitleRequestSucceed(true);
+    }
+
+  },[filterStatusQueryError]);
+
+  useEffect(()=>{
+    let messages = undefined                                                        
+    if (!filterStatusQueryLoading && !filterStatusQueryError &&  filterStatusesQueryData && filterStatusesQueryData.allStatuses && filterStatusesQueryData.allStatuses.length >= 1){
+      messages = 'Status with same title already exist';
+    }else{
+      messages = undefined;
+    } 
+    setVerifyTitleRequestMessage(messages);
+  },[filterStatusesQueryData]);
+  
+    
+  const verifyUniqueTitle = (title: string) => {
+
+    filterTheStatuses({ variables: { filter: { title: title} }});
+  }
+
+  const saveInquiryStatus = async(statusModel: StatusViewModel) => {
+    try {
+      await addStatus({
+        variables:{
+          id:random.int(1,100), 
+          title:statusModel.title, 
+          description: statusModel.description, 
+          color: statusModel.color, 
+          orderIndex: 1, 
+          isActive: statusModel.isActive
+        }
+      });
+
+      showNotify(toastId, true, "Record saved successfully");
+      setFormReadonly(true);
+      setIsRequestSucceed(true);
+
+    } catch (error) {
+
+      let messages = "";
+      if(error.graphQLErrors){
+        error.graphQLErrors.forEach((err:GraphQLError) => {
+          messages = messages + err.message;
+        });
+      }
       
-  const [addStatus, { loading: mutationLoading, error: mutationError }] = useMutation(
-    CreateStatusDocument,
-    {     
-      update(cache, { data: {addStatus} }){
-        const data:any = cache.readQuery({ query: AllStatusesDocument });          
-        data.allStatuses.push(addStatus);
-
-        cache.writeQuery({
-          query: AllStatusesDocument,
-          data: data,
-        });
-      }  
-    }
-    );
-
-    const verifyUniqueTitle = () => {
-      setVerifyTitleApiCallStatus(Object.assign<IApiCallState,IApiCallState,IApiCallState>({}, verifyTitleApiCallStatus, {
-        isRequestInProgress: true,
-        isRequestSucceed: undefined,
-        message: undefined
-      }))
-    }
-
-    const saveInquiryStatus = async(statusModel: StatusViewModel) => {
-      try {
-        await addStatus({
-          variables:{
-            id:random.int(1,100), 
-            title:statusModel.title, 
-            description: statusModel.description, 
-            color: statusModel.color, 
-            orderIndex: 1, 
-            isActive: statusModel.isActive
-          }
-        });
-      } catch (error) {
-        console.log(error);        
-      }     
-
-    }
-
-    const resetForm = () => {
-      statusVM = new StatusViewModel();
-      statusVM.color = "#a2744c";
-
-      setStatusModel(statusVM);
-      //setSaveApiCallStatus({});
-      setVerifyTitleApiCallStatus({});
+      showNotify(toastId, false, messages);
+      
       setFormReadonly(false);
+      setIsRequestSucceed(false);
+    }     
 
-    }
+  }
 
-    let saveApiCallStatus:IApiCallState = {      
-      isRequestInProgress: mutationLoading,
-      isRequestSucceed: mutationError ? false : undefined,
-      message: mutationError ? mutationError.message : undefined
-    }
+  const resetForm = () => {
+    statusVM = new StatusViewModel();
+    statusVM.color = "#a2744c";
+
+    setStatusModel(statusVM);          
+    setFormReadonly(false);
+    setIsRequestSucceed(undefined);
+    setIsVerifyTitleRequestSucceed(undefined);
+    setVerifyTitleRequestMessage(undefined);
+  }
+
+  let saveApiCallStatus:IApiCallState = {      
+    isRequestInProgress: mutationLoading,
+    isRequestSucceed: isRequestSucceed,
+    message: mutationError ? mutationError.message : undefined
+  }
+
+  let verifyTitleApiCallStatus:IApiCallState = {      
+    isRequestInProgress: filterStatusQueryLoading,
+    isRequestSucceed: isVerifyTitleRequestSucceed,
+    message: verifyTitleRequestMessage
+  }
 
   return <EditableStatusForm
           formMode="Create"
@@ -117,29 +141,27 @@ const CreateStatus:React.FC = () => {
         />
 }
 
+const showNotify = (toastId: any, isSucceed: boolean, message: string) => {
+
+  if (isSucceed) {
+    toastId = toast.success(message, {
+      autoClose: 5000, 
+      position: toast.POSITION.BOTTOM_RIGHT
+    });
+    // if (!toastId || !toast.isActive(toastId)) {
+    //   toastId = toast.success(message, {
+    //     autoClose: 2000, position: 'bottom-right'
+    //   });
+    // }
+  } else {
+    toastId = toast.error(message, { 
+      autoClose: 5000, 
+      position: toast.POSITION.BOTTOM_RIGHT
+    });
+  }
+
+  return toastId;
+};
+
 
 export default CreateStatus;
-
-// const mapStateToProps = (appState: ApplicationState): IStateProp => {
-//   return {
-//     inquiryStatusList: appState.InquiryStatus.inquiryStatusList.statuses
-//   };
-// };
-// const mapDispatchToProps = (dispatch: Dispatch): IDispatchProp => ({
-//   AddInquiryStatusToList: (model: InquiryStatusModel) => dispatch(AddInquiryStatusToList(model))
-// })
-
-// const mapDispatchToProps2 = (dispatch: Dispatch): IDispatchProp => {
-//   return {
-//     AddInquiryStatusToList: (model: InquiryStatusModel) => dispatch(AddInquiryStatusToList(model))
-//   }
-// };
-
-// const mapDispatchToProps1:IDispatchProp = ({
-//   AddInquiryStatusToList: AddInquiryStatusToList
-// });
-
-// export default connect<IStateProp, IDispatchProp, any, ApplicationState>(
-//   mapStateToProps,
-//   mapDispatchToProps
-// )(CreateStatus);
