@@ -136,6 +136,37 @@ export type FilterStatusesQuery = (
   )>>> }
 );
 
+export type GetStatusQueryVariables = {
+  id: Scalars['ID'];
+};
+
+
+export type GetStatusQuery = (
+  { __typename?: 'Query' }
+  & { Status: Maybe<(
+    { __typename?: 'Status' }
+    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex' | 'isActive'>
+  )> }
+);
+
+export type UpdateStatusMutationVariables = {
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  color: Scalars['String'];
+  orderIndex: Scalars['Int'];
+  isActive: Scalars['Boolean'];
+};
+
+
+export type UpdateStatusMutation = (
+  { __typename?: 'Mutation' }
+  & { updateStatus: Maybe<(
+    { __typename?: 'Status' }
+    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex'>
+  )> }
+);
+
 export type AllStatusesQueryVariables = {};
 
 
@@ -260,6 +291,119 @@ export function useFilterStatusesLazyQuery(baseOptions?: ApolloReactHooks.LazyQu
 export type FilterStatusesQueryHookResult = ReturnType<typeof useFilterStatusesQuery>;
 export type FilterStatusesLazyQueryHookResult = ReturnType<typeof useFilterStatusesLazyQuery>;
 export type FilterStatusesQueryResult = ApolloReactCommon.QueryResult<FilterStatusesQuery, FilterStatusesQueryVariables>;
+export const GetStatusDocument = gql`
+    query GetStatus($id: ID!) {
+  Status(id: $id) {
+    id
+    title
+    description
+    color
+    orderIndex
+    isActive
+  }
+}
+    `;
+export type GetStatusComponentProps = Omit<ApolloReactComponents.QueryComponentOptions<GetStatusQuery, GetStatusQueryVariables>, 'query'> & ({ variables: GetStatusQueryVariables; skip?: boolean; } | { skip: boolean; });
+
+    export const GetStatusComponent = (props: GetStatusComponentProps) => (
+      <ApolloReactComponents.Query<GetStatusQuery, GetStatusQueryVariables> query={GetStatusDocument} {...props} />
+    );
+    
+export type GetStatusProps<TChildProps = {}> = ApolloReactHoc.DataProps<GetStatusQuery, GetStatusQueryVariables> & TChildProps;
+export function withGetStatus<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  GetStatusQuery,
+  GetStatusQueryVariables,
+  GetStatusProps<TChildProps>>) {
+    return ApolloReactHoc.withQuery<TProps, GetStatusQuery, GetStatusQueryVariables, GetStatusProps<TChildProps>>(GetStatusDocument, {
+      alias: 'getStatus',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useGetStatusQuery__
+ *
+ * To run a query within a React component, call `useGetStatusQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetStatusQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetStatusQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetStatusQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetStatusQuery, GetStatusQueryVariables>) {
+        return ApolloReactHooks.useQuery<GetStatusQuery, GetStatusQueryVariables>(GetStatusDocument, baseOptions);
+      }
+export function useGetStatusLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetStatusQuery, GetStatusQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<GetStatusQuery, GetStatusQueryVariables>(GetStatusDocument, baseOptions);
+        }
+export type GetStatusQueryHookResult = ReturnType<typeof useGetStatusQuery>;
+export type GetStatusLazyQueryHookResult = ReturnType<typeof useGetStatusLazyQuery>;
+export type GetStatusQueryResult = ApolloReactCommon.QueryResult<GetStatusQuery, GetStatusQueryVariables>;
+export const UpdateStatusDocument = gql`
+    mutation UpdateStatus($id: ID!, $title: String!, $description: String!, $color: String!, $orderIndex: Int!, $isActive: Boolean!) {
+  updateStatus(id: $id, title: $title, description: $description, color: $color, orderIndex: $orderIndex, isActive: $isActive) {
+    id
+    title
+    description
+    color
+    orderIndex
+  }
+}
+    `;
+export type UpdateStatusMutationFn = ApolloReactCommon.MutationFunction<UpdateStatusMutation, UpdateStatusMutationVariables>;
+export type UpdateStatusComponentProps = Omit<ApolloReactComponents.MutationComponentOptions<UpdateStatusMutation, UpdateStatusMutationVariables>, 'mutation'>;
+
+    export const UpdateStatusComponent = (props: UpdateStatusComponentProps) => (
+      <ApolloReactComponents.Mutation<UpdateStatusMutation, UpdateStatusMutationVariables> mutation={UpdateStatusDocument} {...props} />
+    );
+    
+export type UpdateStatusProps<TChildProps = {}> = ApolloReactHoc.MutateProps<UpdateStatusMutation, UpdateStatusMutationVariables> & TChildProps;
+export function withUpdateStatus<TProps, TChildProps = {}>(operationOptions?: ApolloReactHoc.OperationOption<
+  TProps,
+  UpdateStatusMutation,
+  UpdateStatusMutationVariables,
+  UpdateStatusProps<TChildProps>>) {
+    return ApolloReactHoc.withMutation<TProps, UpdateStatusMutation, UpdateStatusMutationVariables, UpdateStatusProps<TChildProps>>(UpdateStatusDocument, {
+      alias: 'updateStatus',
+      ...operationOptions
+    });
+};
+
+/**
+ * __useUpdateStatusMutation__
+ *
+ * To run a mutation, you first call `useUpdateStatusMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateStatusMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateStatusMutation, { data, loading, error }] = useUpdateStatusMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      description: // value for 'description'
+ *      color: // value for 'color'
+ *      orderIndex: // value for 'orderIndex'
+ *      isActive: // value for 'isActive'
+ *   },
+ * });
+ */
+export function useUpdateStatusMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateStatusMutation, UpdateStatusMutationVariables>) {
+        return ApolloReactHooks.useMutation<UpdateStatusMutation, UpdateStatusMutationVariables>(UpdateStatusDocument, baseOptions);
+      }
+export type UpdateStatusMutationHookResult = ReturnType<typeof useUpdateStatusMutation>;
+export type UpdateStatusMutationResult = ApolloReactCommon.MutationResult<UpdateStatusMutation>;
+export type UpdateStatusMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateStatusMutation, UpdateStatusMutationVariables>;
 export const AllStatusesDocument = gql`
     query AllStatuses {
   allStatuses {

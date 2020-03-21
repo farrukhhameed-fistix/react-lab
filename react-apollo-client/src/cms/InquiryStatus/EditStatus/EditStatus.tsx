@@ -4,39 +4,44 @@ import { StatusViewModel } from "../Shared/StatusViewModel";
 
 import IApiCallState from "../Shared/ApiCallState";
 import { toast } from "react-toastify";
-import {CreateStatusComponent, useCreateStatusMutation, CreateStatusMutation, CreateStatusDocument, AllStatusesDocument, AllStatusesQuery, useFilterStatusesQuery, useFilterStatusesLazyQuery} from '../../../generated/graphql';
-import { useMutation } from "@apollo/react-hooks";
-import random from 'random';
+import { useUpdateStatusMutation, AllStatusesDocument, AllStatusesQuery,  useFilterStatusesLazyQuery, UpdateStatusMutation, useGetStatusQuery} from '../../../generated/graphql';
 import { GraphQLError } from "graphql/error/GraphQLError";
-import { MutationUpdaterFn, FetchResult } from "apollo-boost";
+import { FetchResult } from "apollo-boost";
 import {DataProxy} from "apollo-cache"
+import { Spinner } from "reactstrap";
 
-const CreateStatus:React.FC = () => {
+interface IProp{
+  id: string
+}
+
+const EditStatus:React.FC<IProp> = ({id}) => {
 
   let toastId:any = null;
   let statusVM = new StatusViewModel();
   statusVM.color = "#a2744c";
-
-  const [statusModel, setStatusModel] = useState(statusVM);  
-  //const [verifyTitleApiCallStatus, setVerifyTitleApiCallStatus] = useState({});
+   
   const [formReadonly, setFormReadonly] = useState(false);  
   const [isRequestSucceed, setIsRequestSucceed] = useState<boolean>();  
   const [isVerifyTitleRequestSucceed, setIsVerifyTitleRequestSucceed] = useState<boolean>();  
   const [verifyTitleRequestMessage, setVerifyTitleRequestMessage] = useState<string>();
 
-  
-  const [addStatus, { loading: mutationLoading, error: mutationError }] = useCreateStatusMutation({ 
-    update(cache:DataProxy, { data }:FetchResult<CreateStatusMutation>){    
+  const { data:getStatusQueryResult, loading:getStatusQueryLoading, error:getStatusQueryError } = useGetStatusQuery({variables:{id:id}}); 
+
+  const [updateStatus, { loading: mutationLoading, error: mutationError }] = useUpdateStatusMutation({ 
+    update(cache:DataProxy, { data }:FetchResult<UpdateStatusMutation>){    
       if(data){
         const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
         if(cacheData && cacheData.allStatuses){
           
-          cacheData.allStatuses.push(data.createStatus);
+          var index = cacheData.allStatuses.findIndex(x => x?.id == statusVM.id.toString())
+          if(index) {
+            cacheData.allStatuses[index] =  data.updateStatus;
 
-          cache.writeQuery({
-            query: AllStatusesDocument,
-            data: cacheData,
-          });
+            cache.writeQuery({
+              query: AllStatusesDocument,
+              data: cacheData,
+            });
+          }
         }
       }
     }  
@@ -60,7 +65,7 @@ const CreateStatus:React.FC = () => {
 
   useEffect(()=>{
     let messages = undefined                                                        
-    if (!filterStatusQueryLoading && !filterStatusQueryError &&  filterStatusesQueryData && filterStatusesQueryData.allStatuses && filterStatusesQueryData.allStatuses.length >= 1){
+    if (!filterStatusQueryLoading && !filterStatusQueryError &&  filterStatusesQueryData && filterStatusesQueryData.allStatuses && filterStatusesQueryData.allStatuses.length >= 1 && filterStatusesQueryData.allStatuses[0]?.id !== statusVM.id.toString()){
       messages = 'Status with same title already exist';
     }else{
       messages = undefined;
@@ -74,16 +79,16 @@ const CreateStatus:React.FC = () => {
     filterTheStatuses({ variables: { filter: { title: title} }});
   }
 
-  const saveInquiryStatus = async(statusModel: StatusViewModel) => {
+  const saveInquiryStatus = async(vm: StatusViewModel) => {
     try {
-      await addStatus({
+      await updateStatus({
         variables:{
-          id:random.int(1,100), 
-          title:statusModel.title, 
-          description: statusModel.description, 
-          color: statusModel.color, 
-          orderIndex: 1, 
-          isActive: statusModel.isActive
+          id:vm.id.toString(),
+          title:vm.title, 
+          description: vm.description, 
+          color: vm.color, 
+          orderIndex: vm.orderIndex ?  vm.orderIndex : 1, 
+          isActive: vm.isActive
         }
       });
 
@@ -112,12 +117,34 @@ const CreateStatus:React.FC = () => {
     statusVM = new StatusViewModel();
     statusVM.color = "#a2744c";
 
-    setStatusModel(statusVM);          
+    //setStatusModel(statusVM);          
     setFormReadonly(false);
     setIsRequestSucceed(undefined);
     setIsVerifyTitleRequestSucceed(undefined);
     setVerifyTitleRequestMessage(undefined);
   }
+
+
+  let errorMessages:string = "";
+  if (getStatusQueryError){ 
+    if(getStatusQueryError.graphQLErrors) {        
+      getStatusQueryError.graphQLErrors.forEach((err:GraphQLError) => {
+        errorMessages = errorMessages + err.message;
+      });
+    } else{
+      errorMessages = getStatusQueryError.message;
+    }
+
+     showNotify(toastId,false,errorMessages);
+
+     return<></>;
+  }
+  
+  if(getStatusQueryLoading){
+    return <Spinner size="sm" color="primary"/>;
+  }
+  
+  
 
   let saveApiCallStatus:IApiCallState = {      
     isRequestInProgress: mutationLoading,
@@ -131,10 +158,17 @@ const CreateStatus:React.FC = () => {
     message: verifyTitleRequestMessage
   }
 
+  statusVM.id =  parseInt(getStatusQueryResult?.Status?.id || "0");
+  statusVM.title = getStatusQueryResult?.Status?.title || "";
+  statusVM.description = getStatusQueryResult?.Status?.description || "";
+  statusVM.color = getStatusQueryResult?.Status?.color || "#a2744c";
+  statusVM.isActive = getStatusQueryResult?.Status?.isActive || true;
+  statusVM.orderIndex = getStatusQueryResult?.Status?.orderIndex || 1;
+
   return <EditableStatusForm
           formMode="Create"
           isFormReadonly={formReadonly}
-          statusModel={statusModel}
+          statusModel={statusVM}
           verifyUniqueTitle={verifyUniqueTitle}
           saveStatus = {saveInquiryStatus}
           saveApiCallStatus={saveApiCallStatus}
@@ -149,12 +183,7 @@ const showNotify = (toastId: any, isSucceed: boolean, message: string) => {
     toastId = toast.success(message, {
       autoClose: 5000, 
       position: toast.POSITION.BOTTOM_RIGHT
-    });
-    // if (!toastId || !toast.isActive(toastId)) {
-    //   toastId = toast.success(message, {
-    //     autoClose: 2000, position: 'bottom-right'
-    //   });
-    // }
+    });    
   } else {
     toastId = toast.error(message, { 
       autoClose: 5000, 
@@ -165,5 +194,4 @@ const showNotify = (toastId: any, isSucceed: boolean, message: string) => {
   return toastId;
 };
 
-
-export default CreateStatus;
+export default EditStatus;

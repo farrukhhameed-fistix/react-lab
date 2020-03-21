@@ -1,0 +1,10 @@
+query GetStatus($id: ID!){
+  Status(id: $id){
+    id
+    title
+    description
+    color
+    orderIndex
+    isActive
+  }
+}

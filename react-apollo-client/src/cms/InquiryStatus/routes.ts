@@ -8,9 +8,9 @@ const InquiryStatusCreatePage = React.lazy(() =>
   import("./CreateStatus/CreateStatusPage")
 );
 
-// const InquiryStatusEditPage = React.lazy(() =>
-//   import("./EditStatus/EditStatusPage")
-// );
+const InquiryStatusEditPage = React.lazy(() =>
+  import("./EditStatus/EditStatusPage")
+);
 
 const routes = [  
   {
@@ -24,11 +24,11 @@ const routes = [
     name: "Create Inquiry Status",
     component: InquiryStatusCreatePage
   },
-  // {
-  //   path: "/cms/settings/inquiry-status/edit/:id",
-  //   name: "Edit Inquiry Status",
-  //   component: InquiryStatusEditPage
-  // }
+  {
+    path: "/cms/inquiry-status/edit/:id",
+    name: "Edit Inquiry Status",
+    component: InquiryStatusEditPage
+  }
 ];
 
 export { routes as InquiryStatusRoutes };
