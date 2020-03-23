@@ -5,5 +5,6 @@ mutation CreateStatus($id:ID!, $title: String!, $description: String!, $color: S
     description
     color
     orderIndex
+    isActive
   }
 }

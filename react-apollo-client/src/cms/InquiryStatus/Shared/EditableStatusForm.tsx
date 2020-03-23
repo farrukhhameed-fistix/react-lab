@@ -72,13 +72,11 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
             id="title"    
             valid={parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length == 0}        
             invalid={(formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined) 
-              || (parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0)
-              // formikProps.touched && formikProps.touched.title && formikProps.errors && formikProps.errors.title != undefined
+              || (parentProps.uniqueTitleVerifyApiCallStatus.message !== undefined && parentProps.uniqueTitleVerifyApiCallStatus.message.length > 0)              
             }
             value={formikProps.values.title}
             onChange={e => {
-              formikProps.handleChange(e); 
-              //this.updateFieldValue("title", e.target.value)
+              formikProps.handleChange(e);               
             }}
             onBlur={e => {
               if (!parentProps.isFormReadonly) {
@@ -126,30 +124,25 @@ const EditableStatusFormikForm = ({formikProps, parentProps} : ICombineProp) => 
         </FormGroup>
         <FormGroup>
           <Label htmlFor="color">Color</Label>
-          <SketchPicker
-            // id="color"
-            // name="color"
-            // type="color"
+          <SketchPicker            
             color={formikProps.values.color}
             onChangeComplete={(color:any) => {
               formikProps.setFieldValue("color", color.hex)
-            }}
-            // onBlur={formikProps.handleBlur}
-            // readOnly={parentProps.isFormReadonly}
+            }}            
           />             
         </FormGroup>
         <div className="form-actions">
           <Button className="mr-1" type="submit" color="primary" disabled={parentProps.saveApiCallStatus.isRequestInProgress || parentProps.isFormReadonly}>Submit</Button>
 
           {
-            parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&
+            parentProps.formMode == "Create" && parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&
             <Link to={`/cms/inquiry-status/edit/${formikProps.values.id}`} >
               <Button className="mr-1" color="primary">Edit</Button>
             </Link>
           }
 
           {
-            parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&            
+            parentProps.formMode == "Create" && parentProps.saveApiCallStatus.isRequestInProgress === false && parentProps.saveApiCallStatus.isRequestSucceed &&            
             <Button className="mr-1" color="primary" onClick={
               () => {
                 formikProps.resetForm();

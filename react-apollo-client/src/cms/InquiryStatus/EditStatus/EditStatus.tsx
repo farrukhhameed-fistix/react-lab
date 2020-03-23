@@ -30,18 +30,22 @@ const EditStatus:React.FC<IProp> = ({id}) => {
   const [updateStatus, { loading: mutationLoading, error: mutationError }] = useUpdateStatusMutation({ 
     update(cache:DataProxy, { data }:FetchResult<UpdateStatusMutation>){    
       if(data){
-        const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
-        if(cacheData && cacheData.allStatuses){
-          
-          var index = cacheData.allStatuses.findIndex(x => x?.id == statusVM.id.toString())
-          if(index) {
-            cacheData.allStatuses[index] =  data.updateStatus;
+        try{
+          const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
+          if(cacheData && cacheData.allStatuses){
+            
+            var index = cacheData.allStatuses.findIndex(x => x?.id == statusVM.id.toString())
+            if(index) {
+              cacheData.allStatuses[index] =  data.updateStatus;
 
-            cache.writeQuery({
-              query: AllStatusesDocument,
-              data: cacheData,
-            });
+              cache.writeQuery({
+                query: AllStatusesDocument,
+                data: cacheData,
+              });
+            }
           }
+        } catch (error) {
+          console.log(error); 
         }
       }
     }  
@@ -131,8 +135,10 @@ const EditStatus:React.FC<IProp> = ({id}) => {
       getStatusQueryError.graphQLErrors.forEach((err:GraphQLError) => {
         errorMessages = errorMessages + err.message;
       });
-    } else{
+    } else if(getStatusQueryError.message){
       errorMessages = getStatusQueryError.message;
+    }else{
+      errorMessages = "Some error occured";
     }
 
      showNotify(toastId,false,errorMessages);
@@ -166,7 +172,7 @@ const EditStatus:React.FC<IProp> = ({id}) => {
   statusVM.orderIndex = getStatusQueryResult?.Status?.orderIndex || 1;
 
   return <EditableStatusForm
-          formMode="Create"
+          formMode="Edit"
           isFormReadonly={formReadonly}
           statusModel={statusVM}
           verifyUniqueTitle={verifyUniqueTitle}

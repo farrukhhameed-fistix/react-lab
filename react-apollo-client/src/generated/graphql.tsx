@@ -119,7 +119,7 @@ export type CreateStatusMutation = (
   { __typename?: 'Mutation' }
   & { createStatus: Maybe<(
     { __typename?: 'Status' }
-    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex'>
+    & Pick<Status, 'id' | 'title' | 'description' | 'color' | 'orderIndex' | 'isActive'>
   )> }
 );
 
@@ -187,6 +187,7 @@ export const CreateStatusDocument = gql`
     description
     color
     orderIndex
+    isActive
   }
 }
     `;

@@ -4,21 +4,20 @@ import { StatusViewModel } from "../Shared/StatusViewModel";
 
 import IApiCallState from "../Shared/ApiCallState";
 import { toast } from "react-toastify";
-import {CreateStatusComponent, useCreateStatusMutation, CreateStatusMutation, CreateStatusDocument, AllStatusesDocument, AllStatusesQuery, useFilterStatusesQuery, useFilterStatusesLazyQuery} from '../../../generated/graphql';
-import { useMutation } from "@apollo/react-hooks";
+import {useCreateStatusMutation, CreateStatusMutation, CreateStatusDocument, AllStatusesDocument, AllStatusesQuery, useFilterStatusesQuery, useFilterStatusesLazyQuery} from '../../../generated/graphql';
 import random from 'random';
 import { GraphQLError } from "graphql/error/GraphQLError";
-import { MutationUpdaterFn, FetchResult } from "apollo-boost";
+import { FetchResult } from "apollo-boost";
 import {DataProxy} from "apollo-cache"
 
 const CreateStatus:React.FC = () => {
 
   let toastId:any = null;
-  let statusVM = new StatusViewModel();
-  statusVM.color = "#a2744c";
+  
+  let vm = new StatusViewModel();
+  vm.color = "#a2744c";
 
-  const [statusModel, setStatusModel] = useState(statusVM);  
-  //const [verifyTitleApiCallStatus, setVerifyTitleApiCallStatus] = useState({});
+  const [statusViewModel, setStatusViewModel] = useState(vm);    
   const [formReadonly, setFormReadonly] = useState(false);  
   const [isRequestSucceed, setIsRequestSucceed] = useState<boolean>();  
   const [isVerifyTitleRequestSucceed, setIsVerifyTitleRequestSucceed] = useState<boolean>();  
@@ -27,16 +26,31 @@ const CreateStatus:React.FC = () => {
   
   const [addStatus, { loading: mutationLoading, error: mutationError }] = useCreateStatusMutation({ 
     update(cache:DataProxy, { data }:FetchResult<CreateStatusMutation>){    
-      if(data){
-        const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
-        if(cacheData && cacheData.allStatuses){
-          
-          cacheData.allStatuses.push(data.createStatus);
+      if(data){        
+        try {
+          const cacheData = cache.readQuery<AllStatusesQuery>({ query: AllStatusesDocument });                  
+          if(cacheData && cacheData.allStatuses){
+            
+            cacheData.allStatuses.push(data.createStatus);
+  
+            cache.writeQuery({
+              query: AllStatusesDocument,
+              data: cacheData,
+            });
+          }  
+        } catch (error) {
+         console.log(error); 
+        }        
 
-          cache.writeQuery({
-            query: AllStatusesDocument,
-            data: cacheData,
-          });
+        if(data.createStatus){
+          vm.id =  parseInt(data.createStatus.id)
+          vm.orderIndex = data.createStatus.orderIndex;
+          vm.title = data.createStatus.title;
+          vm.description = data.createStatus.description;
+          vm.color = data.createStatus.color;
+          vm.isActive = data.createStatus.isActive;
+          
+          setStatusViewModel(vm);
         }
       }
     }  
@@ -74,16 +88,16 @@ const CreateStatus:React.FC = () => {
     filterTheStatuses({ variables: { filter: { title: title} }});
   }
 
-  const saveInquiryStatus = async(statusModel: StatusViewModel) => {
+  const saveInquiryStatus = async(vmToSave: StatusViewModel) => {
     try {
       await addStatus({
         variables:{
           id:random.int(1,100), 
-          title:statusModel.title, 
-          description: statusModel.description, 
-          color: statusModel.color, 
+          title:vmToSave.title, 
+          description: vmToSave.description, 
+          color: vmToSave.color, 
           orderIndex: 1, 
-          isActive: statusModel.isActive
+          isActive: vmToSave.isActive
         }
       });
 
@@ -109,10 +123,10 @@ const CreateStatus:React.FC = () => {
   }
 
   const resetForm = () => {
-    statusVM = new StatusViewModel();
-    statusVM.color = "#a2744c";
+    vm = new StatusViewModel();
+    vm.color = "#a2744c";
 
-    setStatusModel(statusVM);          
+    setStatusViewModel(vm);          
     setFormReadonly(false);
     setIsRequestSucceed(undefined);
     setIsVerifyTitleRequestSucceed(undefined);
@@ -134,7 +148,7 @@ const CreateStatus:React.FC = () => {
   return <EditableStatusForm
           formMode="Create"
           isFormReadonly={formReadonly}
-          statusModel={statusModel}
+          statusModel={statusViewModel}
           verifyUniqueTitle={verifyUniqueTitle}
           saveStatus = {saveInquiryStatus}
           saveApiCallStatus={saveApiCallStatus}
