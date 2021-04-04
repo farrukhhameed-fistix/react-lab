@@ -10,21 +10,57 @@ interface IAction{
 function reducer(state:IManageTaskState, action:IAction):IManageTaskState{
 
     switch (action.Type){
-        case "CREATE_TASK":
-            let task:ITaskModel = {...action.Payload};
-            task.id = (state.Tasks.length + 1).toString();            
+        case "SET_TASKS":
+            let tasks:ITaskModel[] = [...action.Payload.Tasks];
             
-            return {Tasks:[...state.Tasks,task]};            
+            return {...state, Tasks:[...tasks]};          
+                    
+        case "GET_ALL_TASKS_API_START":
+            return {...state, GetApiCallInprogress: true, GetApiCallError: ''};
 
+        case "GET_ALL_TASKS_API_COMPLETE":
+            return {...state, GetApiCallInprogress: false};
+        
+        case "GET_ALL_TASKS_API_ERROR":
+            return {...state, GetApiCallError: action.Payload};
+
+        
+        
         case "DELETE_TASK":
             let index = state.Tasks.findIndex(x=>x.id == action.Payload);
             if(index > -1){
                 var taskCopy = [...state.Tasks];
                 taskCopy.splice(index,1)
 
-                return{Tasks:[...taskCopy]};
+                return{...state, Tasks:[...taskCopy]};
             }
             return state;
+
+        case "DELETE_TASK_API_START":
+            return {...state, DeleteApiCallInprogress: true, DeleteApiCallError: '', DeleteApiCallTaskId: action.Payload};
+
+        case "DELETE_TASK_API_COMPLETE":
+            return {...state, DeleteApiCallInprogress: false, DeleteApiCallTaskId: action.Payload};
+        
+        case "DELETE_TASK_API_ERROR":
+            return {...state, DeleteApiCallError: action.Payload.Error, DeleteApiCallTaskId: action.Payload.TaskId};       
+
+
+
+
+        case "CREATE_TASK":
+            let task:ITaskModel = {...action.Payload};
+            
+            return {...state, Tasks:[...state.Tasks,task]};              
+    
+        case "CREATE_TASK_API_START":
+            return {...state, SaveApiCallInprogress: true, SaveApiCallError: ''};
+
+        case "CREATE_TASK_API_COMPLETE":
+            return {...state, SaveApiCallInprogress: false};
+        
+        case "CREATE_TASK_API_ERROR":
+            return {...state, SaveApiCallError: action.Payload};        
 
         default:
             return state;

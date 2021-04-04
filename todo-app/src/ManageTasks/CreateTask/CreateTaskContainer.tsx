@@ -1,15 +1,22 @@
 import { useContext } from "react"
 import { ITaskModel } from "../Models/ITaskModel";
+import useTaskActions from "../Provider/TaskActions";
 import { TaskContext } from "../Provider/TaskContext";
 import {CreateTask} from "./CreateTask"
 
 export const CreateTaskContainer = () =>
 {
-    const {Dispatch} = useContext(TaskContext);
+    const {State, Dispatch} = useContext(TaskContext);
+    const [SaveTask] = useTaskActions(Dispatch);
 
     const Add = (task:ITaskModel) => {
-        Dispatch({Type:"CREATE_TASK", Payload: task});
+        SaveTask(task);
+        //Dispatch({Type:"CREATE_TASK", Payload: task});
     }
 
-    return <CreateTask OnSave={Add} />
+    return <CreateTask 
+        SaveApiCallInprogress={State.SaveApiCallInprogress} 
+        SaveApiCallError={State.SaveApiCallError} 
+        OnSave={Add} 
+    />
 }

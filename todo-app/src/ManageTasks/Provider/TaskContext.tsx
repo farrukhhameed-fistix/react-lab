@@ -10,4 +10,15 @@ export interface ITaskContextType{
     //Remove: (id:string)=>void
 }
 
-export const TaskContext = React.createContext<ITaskContextType>({State:{Tasks:[]}, Dispatch:()=>{}});
+const initTaskState:IManageTaskState = {
+    Tasks:[],
+    GetApiCallError: '',
+    GetApiCallInprogress: false,
+    SaveApiCallInprogress: false,
+    SaveApiCallError: '',
+    DeleteApiCallError: '',    
+    DeleteApiCallInprogress: false,    
+    DeleteApiCallTaskId:''
+}
+
+export const TaskContext = React.createContext<ITaskContextType>({State:initTaskState, Dispatch:()=>{}});
