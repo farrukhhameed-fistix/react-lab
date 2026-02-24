@@ -1,68 +1,75 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Inquiry Management
 
-## Available Scripts
+A robust, enterprise-grade Single Page Application (SPA) built with **React**, **TypeScript**, and **Redux**. This project is built using the **CoreUI Admin Dashboard React Template**, providing a professional, responsive, and feature-rich interface for internal management systems.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Key Features
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+* **Admin Dashboard Integration:** Built on the **CoreUI React Template**, utilizing its extensive library of pre-styled components, layouts, and navigation patterns.
+* **Advanced State Management:** Implements a dual-layer asynchronous strategy using **Redux-Saga** for background API watchers and **Redux-Thunk** for dispatching complex functional updates.
+* **Type-Safe Architecture:** Developed with **TypeScript 3.2**, utilizing strict interfaces for Props, State, and Redux Actions to ensure compile-time safety and reliable refactoring.
+* **Intelligent Form Logic:** Integrated **Formik** for form state management and **Yup** for schema-based validation, featuring real-time "unique title" verification via API gateways.
+* **Performance Optimization:** Utilizes **React.lazy** and **Suspense** for component-level code splitting, ensuring optimized load times for a smoother user experience.
+* **Dynamic UI Elements:** Enhanced with **Reactstrap** and **Styled Components**, featuring integrated data tables, loading states, and toast notifications.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠 Tech Stack
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| Category | Technology |
+| --- | --- |
+| **UI Template** | **CoreUI Admin Dashboard (React Version)** |
+| **Core Framework** | React 16.7, TypeScript 3.2 |
+| **State Management** | Redux, Redux-Saga, Redux-Thunk, Typesafe-Actions |
+| **Routing** | React Router DOM (HashRouter), Connected React Router |
+| **Forms & Validation** | Formik, Yup |
+| **Visualization** | Chart.js, React-chartjs-2, React-color |
+| **Icons & Styling** | Font-Awesome, Simple Line Icons, Styled Components |
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📂 Project Structure
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+The project follows a modular feature-based architecture, ensuring that logic related to specific domains is encapsulated:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+* **CoreUI Layouts:** Optimized sidebar, header, and breadcrumb navigation provided by the CoreUI framework.
+* **Feature Modules:** Located in `src/cms/`, each module (e.g., Inquiry Status) contains its own components, actions, reducers, and sagas.
+* **API Gateway:** A dedicated layer for handling asynchronous requests, mock data simulation, and centralized error handling.
+* **Shared Components:** Reusable UI elements such as custom Loaders, Messages, and Editable Form templates.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 🚥 Getting Started
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Prerequisites
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+* **Node.js** (v10+ recommended for this environment)
+* **npm** or **yarn**
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Installation
 
-## Learn More
+1. **Clone the repository:**
+`git clone https://github.com/your-username/react-app.git`
+2. **Install dependencies:**
+`npm install`
+3. **Start the development server:**
+`npm start`
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Available Scripts
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+* `npm start`: Runs the app in development mode at [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000).
+* `npm run build`: Bundles the app into static files for production.
+* `npm test`: Launches the interactive test runner.
 
-### Code Splitting
+---
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## 🏗 Architectural Highlights
 
-### Analyzing the Bundle Size
+### CoreUI Customization
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+The project demonstrates how to extend a professional template like **CoreUI** by integrating custom Redux flows and TypeScript interfaces without compromising the template's responsive integrity.
 
-### Making a Progressive Web App
+### Side-Effect Management
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+This project showcases how to handle complex asynchronous flows by separating UI triggers from business logic. By using Sagas to watch for specific action types, the UI remains decoupled from API implementation details.
